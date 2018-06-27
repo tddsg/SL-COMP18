@@ -1,0 +1,90 @@
+(set-logic QF_S)
+(set-info :source |  Sleek solver
+  http://loris-7.ddns.comp.nus.edu.sg/~project/s2/beta/
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun nxt () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun lseg ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?in ?p  )
+                (tobool emp ) 
+            )
+            (exists ((?a Refnode) ) 
+                (tobool (ssep 
+                    (pto ?in
+                        (ref nxt ?a) 
+                    ) 
+                    (lseg ?a ?p) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun right1 ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (exists ((?u Refnode) ) 
+            (tobool (ssep 
+                (lseg ?in ?u) 
+                (pto ?u
+                    (ref nxt ?p) 
+                ) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun right2 ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (exists ((?u Refnode) ) 
+            (tobool (ssep 
+                (lseg ?in ?u) 
+                (lseg ?u ?p) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun right3 ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (exists ((?u Refnode) (?u2 Refnode) ) 
+            (tobool (ssep 
+                (lseg ?in ?u) 
+                (lseg ?u ?u2) 
+                (lseg ?u2 ?p) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun right4 ((?in Refnode) ) 
+ Space 
+    (tospace (exists ((?u Refnode) (?w Refnode) ) 
+            (tobool (ssep 
+                (lseg ?in ?u) 
+                (lseg ?u ?w) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun right5 ((?in Refnode) ) 
+ Space 
+    (tospace (exists ((?w Refnode) ) 
+            (tobool (lseg ?in ?w) )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun p () Refnode)
+(declare-fun x () Refnode)
+
+(assert (tobool (lseg x p) )
+ )
+
+(assert (not (tobool (right4 x) ) )
+ )
+(check-sat)

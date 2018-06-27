@@ -1,0 +1,91 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun elseg ((?x_1 Refnode) (?y_2 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_1 ?y_2  )
+            )
+            (exists ((?u_3 Refnode) (?v_4 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?u_3
+                        (ref next ?v_4) 
+                    ) 
+                    (pto ?x_1
+                        (ref next ?u_3) 
+                    ) 
+                    (elseg ?v_4 ?y_2) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun olseg ((?x_5 Refnode) (?y_6 Refnode) ) 
+        Space 
+    (tospace (or 
+            (tobool (pto ?x_5
+                (ref next ?y_6) 
+            ) ) 
+            (exists ((?u_7 Refnode) (?v_8 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?u_7
+                        (ref next ?v_8) 
+                    ) 
+                    (pto ?x_5
+                        (ref next ?u_7) 
+                    ) 
+                    (olseg ?v_8 ?y_6) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ls ((?x_9 Refnode) (?y_10 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_9 ?y_10  )
+            )
+            (exists ((?u_11 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_9
+                        (ref next ?u_11) 
+                    ) 
+                    (ls ?u_11 ?y_10) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ls_all ((?x_12 Refnode) (?y_13 Refnode) ) 
+        Space 
+    (tospace (or 
+            (tobool (elseg ?x_12 ?y_13) )
+            (tobool (olseg ?x_12 ?y_13) )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun u () Refnode)
+(declare-fun y () Refnode)
+
+(assert (tobool (ssep 
+        (ls_all x u) 
+        (olseg u y) 
+    ) ) 
+ )
+
+(assert (not (tobool (ls x y) ) )
+ )
+(check-sat)

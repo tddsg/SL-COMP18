@@ -1,0 +1,23 @@
+
+data RefTLL_t {
+    RefTLL_t left;
+    RefTLL_t right;
+    RefTLL_t next;
+    RefTLL_t parent;
+};
+
+pred TLL_plus(root,pra,ll,lr) := 
+    (root->RefTLL_t{left:nil,right:nil,next:lr,parent:pra} & root=ll)
+    \/ (exists l,r,z. root->RefTLL_t{left:l,right:r,next:nil,parent:pra} * TLL_plus(l,root,ll,z) * TLL_plus(r,root,z,lr));
+
+pred TLL_aux(x,p,z,back,top,mright) := 
+    (exists up,r,lr. x->RefTLL_t{left:back,right:r,next:nil,parent:up} * TLL_aux(up,p,lr,x,top,mright) * TLL_plus(r,x,z,lr))
+    \/ (exists r. x->RefTLL_t{left:back,right:r,next:nil,parent:p} * TLL_plus(r,x,z,mright) & x=top);
+
+pred TLL_plus_rev(top,p,mleft,mright) := 
+    (top->RefTLL_t{left:nil,right:nil,next:mright,parent:p} & top=mleft)
+    \/ (exists x,up,lr. x->RefTLL_t{left:nil,right:nil,next:lr,parent:up} * TLL_aux(up,p,lr,x,top,mright) & mleft=x);
+
+
+checkentail TLL_plus_rev(x,y,u,v)
+    |- TLL_plus(x,y,u,v);

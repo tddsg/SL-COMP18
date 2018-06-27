@@ -1,0 +1,14 @@
+
+data RefGTyp {
+    RefGTyp f0;
+};
+
+pred ListO(x,y) := 
+    (x->RefGTyp{f0:y} & nil!=x)
+    \/ (exists xp. x->RefGTyp{f0:xp} * ListE(xp,y) & nil!=x);
+
+pred ListE(x,y) := (exists xp. x->RefGTyp{f0:xp} * ListO(xp,y) & nil!=x);
+
+
+checkentail ListE(x,y) * ListE(y,z)
+    |- ListE(x,z);

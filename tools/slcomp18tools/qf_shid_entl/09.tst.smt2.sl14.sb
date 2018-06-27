@@ -1,0 +1,13 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred DLL(x,y,z,w) := 
+    (emp & x=y & z=w)
+    \/ (exists zp. x->RefGTyp{f0:zp,f1:w} * DLL(zp,y,z,x) & nil!=x);
+
+
+checkentail DLL(x,y,z,w) * DLL(a,x,w,b)
+    |- DLL(a,y,z,b);

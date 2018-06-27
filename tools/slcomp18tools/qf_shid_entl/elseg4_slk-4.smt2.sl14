@@ -1,0 +1,65 @@
+(set-logic QF_S)
+(set-info :source |  Sleek solver
+  http://loris-7.ddns.comp.nus.edu.sg/~project/s2/beta/
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status sat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun nxt () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun elseg ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?in ?p  )
+                (tobool emp ) 
+            )
+            (exists ((?a Refnode) (?b Refnode) ) 
+                (tobool (ssep 
+                    (pto ?in
+                        (ref nxt ?a) 
+                    ) 
+                    (pto ?a
+                        (ref nxt ?b) 
+                    ) 
+                    (elseg ?b ?p) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun right ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (exists ((?u Refnode) ) 
+            (tobool (ssep 
+                (elseg ?in ?u) 
+                (elseg ?u ?p) 
+            ) ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun a () Refnode)
+(declare-fun b () Refnode)
+(declare-fun x () Refnode)
+(declare-fun p () Refnode)
+
+(assert (tobool (ssep 
+        (pto x
+            (ref nxt a) 
+        ) 
+        (pto a
+            (ref nxt b) 
+        ) 
+        (pto b
+            (ref nxt p) 
+        ) 
+    ) ) 
+ )
+
+(assert (not (tobool (elseg x p) ) )
+ )
+(check-sat)

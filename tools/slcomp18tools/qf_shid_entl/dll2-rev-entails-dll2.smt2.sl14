@@ -1,0 +1,99 @@
+(set-logic QF_S)
+(set-info :source | 
+  R. Iosif, A. Rogalewicz and T. Vojnar. 
+  Deciding Entailments in Inductive Separation Logic with Tree Automata arXiv:1402.2127. 
+  http://www.fit.vutbr.cz/research/groups/verifit/tools/slide/ 
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefDLL2_t 0)
+;; Declare cell type DLL2_t
+(declare-fun prev () (Field RefDLL2_t RefDLL2_t) )
+(declare-fun next () (Field RefDLL2_t RefDLL2_t) )
+(declare-fun prev2 () (Field RefDLL2_t RefDLL2_t) )
+(declare-fun next2 () (Field RefDLL2_t RefDLL2_t) )
+(declare-fun down () (Field RefDLL2_t RefDLL2_t) )
+
+;; IGNORE declare-heap 
+(define-fun DLL1_plus ((?hd RefDLL2_t) (?p RefDLL2_t) ) 
+ Space 
+    (tospace (or 
+            (tobool (pto ?hd
+                (sref (ref prev ?p) (ref next nil ) (ref prev2 nil ) (ref next2 nil ) (ref down nil ) ) 
+            ) ) 
+            (exists ((?x RefDLL2_t) ) 
+                (tobool (ssep 
+                    (pto ?hd
+                        (sref (ref prev ?p) (ref next ?x) (ref prev2 nil ) (ref next2 nil ) (ref down nil ) ) 
+                    ) 
+                    (DLL1_plus ?x ?hd) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun DLL2_plus ((?hd RefDLL2_t) (?p RefDLL2_t) (?tl RefDLL2_t) (?n RefDLL2_t) ) 
+ Space 
+    (tospace (or 
+            (exists ((?down_hd RefDLL2_t) ) 
+                (and 
+                    (= ?hd ?tl  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref prev nil ) (ref next nil ) (ref prev2 ?p) (ref next2 ?n) (ref down ?down_hd) ) 
+                        ) 
+                        (DLL1_plus ?down_hd ?hd) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?x RefDLL2_t) (?down_hd RefDLL2_t) ) 
+                (tobool (ssep 
+                    (pto ?hd
+                        (sref (ref prev nil ) (ref next nil ) (ref prev2 ?p) (ref next2 ?x) (ref down ?down_hd) ) 
+                    ) 
+                    (DLL1_plus ?down_hd ?hd) 
+                    (DLL2_plus ?x ?hd ?tl ?n) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun DLL2_plus_rev ((?hd RefDLL2_t) (?p RefDLL2_t) (?tl RefDLL2_t) (?n RefDLL2_t) ) 
+ Space 
+    (tospace (or 
+            (exists ((?down_hd RefDLL2_t) ) 
+                (and 
+                    (= ?hd ?tl  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref prev nil ) (ref next nil ) (ref prev2 ?p) (ref next2 ?n) (ref down ?down_hd) ) 
+                        ) 
+                        (DLL1_plus ?down_hd ?hd) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?x RefDLL2_t) (?down_hd RefDLL2_t) ) 
+                (tobool (ssep 
+                    (pto ?tl
+                        (sref (ref prev nil ) (ref next nil ) (ref prev2 ?x) (ref next2 ?n) (ref down ?down_hd) ) 
+                    ) 
+                    (DLL1_plus ?down_hd ?tl) 
+                    (DLL2_plus_rev ?hd ?p ?x ?tl) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefDLL2_t)
+(declare-fun y () RefDLL2_t)
+(declare-fun u () RefDLL2_t)
+(declare-fun v () RefDLL2_t)
+
+(assert (tobool (DLL2_plus_rev x y u v) )
+ )
+
+(assert (not (tobool (DLL2_plus x y u v) ) )
+ )
+(check-sat)

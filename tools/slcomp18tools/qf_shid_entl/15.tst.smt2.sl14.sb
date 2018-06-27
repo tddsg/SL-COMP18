@@ -1,0 +1,14 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred BinPath(x,y) := 
+    (emp & x=y)
+    \/ (exists xp,yp. x->RefGTyp{f0:xp,f1:yp} * BinPath(xp,y) & nil!=x)
+    \/ (exists xp,yp. x->RefGTyp{f0:xp,f1:yp} * BinPath(yp,y) & nil!=x);
+
+
+checkentail BinPath(x,z) * BinPath(z,y)
+    |- BinPath(x,y);

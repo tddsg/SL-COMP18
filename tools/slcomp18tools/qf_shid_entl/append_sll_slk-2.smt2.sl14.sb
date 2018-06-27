@@ -1,0 +1,18 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ll(in) := 
+    (emp & nil=in)
+    \/ (exists q_18. in->Refnode{next:q_18} * ll(q_18));
+
+pred ll_e1(in) := (exists q. in->Refnode{next:q} * ll(q));
+
+pred ll_e2(in) := (exists p,q. in->Refnode{next:p} * ll(q) & p=q);
+
+pred node_e1(in,q) := (exists p. in->Refnode{next:p} & q=p);
+
+
+checkentail ll(q) * ll(y) * xprm->Refnode{next:q} & nil=vprm & vprm=q & xprm=x & yprm=y & nil!=x
+    |- ll(q) * ll(y) * xprm->Refnode{next:q} & nil=vprm & vprm=q & xprm=x & yprm=y & nil!=x;

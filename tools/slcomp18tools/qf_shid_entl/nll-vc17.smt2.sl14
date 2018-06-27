@@ -1,0 +1,92 @@
+(set-logic QF_S)
+(set-info :source |
+Quang Loc Le Q.Le@tees.ac.uk
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-15")
+(declare-sort RefNLL_lvl1_t 0)
+(declare-sort RefNLL_lvl2_t 0)
+;; Declare cell type NLL_lvl1_t
+(declare-fun next1 () (Field RefNLL_lvl1_t RefNLL_lvl1_t) )
+
+;; Declare cell type NLL_lvl2_t
+(declare-fun next2 () (Field RefNLL_lvl2_t RefNLL_lvl2_t) )
+(declare-fun down () (Field RefNLL_lvl2_t RefNLL_lvl1_t) )
+
+;; IGNORE declare-heap 
+(define-fun lso ((?in RefNLL_lvl1_t) (?out RefNLL_lvl1_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?in ?out  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefNLL_lvl1_t) ) 
+                (and 
+                    (distinct ?in ?out  )
+                    (tobool (ssep 
+                        (pto ?in
+                            (ref next1 ?u) 
+                        ) 
+                        (lso ?u ?out) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun nll ((?in RefNLL_lvl2_t) (?out RefNLL_lvl2_t) (?boundary RefNLL_lvl1_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?in ?out  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefNLL_lvl2_t) (?Z1 RefNLL_lvl1_t) ) 
+                (and 
+                    (distinct ?in ?out  )
+                    (tobool (ssep 
+                        (pto ?in
+                            (sref (ref next2 ?u) (ref down ?Z1) ) 
+                        ) 
+                        (lso ?Z1 ?boundary) 
+                        (nll ?u ?out ?boundary) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x1 () RefNLL_lvl2_t)
+(declare-fun x2 () RefNLL_lvl2_t)
+(declare-fun x2_1 () RefNLL_lvl1_t)
+(declare-fun x3 () RefNLL_lvl2_t)
+(declare-fun x4 () RefNLL_lvl2_t)
+(declare-fun x1_1 () RefNLL_lvl1_t)
+(declare-fun x1_2 () RefNLL_lvl1_t)
+(declare-fun x1_3 () RefNLL_lvl1_t)
+(declare-fun x5 () RefNLL_lvl2_t)
+(declare-fun x2_2 () RefNLL_lvl1_t)
+(declare-fun x6 () RefNLL_lvl2_t)
+
+(assert (tobool (ssep 
+        (nll x1 x2 nil ) 
+        (pto x2
+            (sref (ref next2 x3) (ref down x2_1) ) 
+        ) 
+        (lso x2_1 nil ) 
+        (nll x3 nil  nil ) 
+        (nll x4 x5 nil ) 
+        (nll x5 x6 nil ) 
+    ) ) 
+ )
+
+(assert (not (tobool (ssep 
+        (nll x4 x6 nil ) 
+        (nll x1 nil  nil ) 
+    ) )  )
+ )
+(check-sat)

@@ -1,0 +1,22 @@
+
+data Refnode {
+    Refnode nxt;
+};
+
+pred lseg(in,p) := 
+    (emp & in=p)
+    \/ (exists a. in->Refnode{nxt:a} * lseg(a,p));
+
+pred right1(in,p) := (exists u. lseg(in,u) * u->Refnode{nxt:p});
+
+pred right2(in,p) := (exists u. lseg(in,u) * lseg(u,p));
+
+pred right3(in,p) := (exists u,u2. lseg(in,u) * lseg(u,u2) * lseg(u2,p));
+
+pred right4(in) := (exists u,w. lseg(in,u) * lseg(u,w));
+
+pred right5(in) := (exists w. lseg(in,w));
+
+
+checkentail lseg(x,p)
+    |- right4(x);

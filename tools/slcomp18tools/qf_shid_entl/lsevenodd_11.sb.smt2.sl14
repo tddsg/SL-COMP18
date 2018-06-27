@@ -1,0 +1,85 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun ls ((?x_1 Refnode) (?y_2 Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_1 ?y_2  )
+            )
+            (exists ((?u_3 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_1
+                        (ref next ?u_3) 
+                    ) 
+                    (ls ?u_3 ?y_2) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ls_even ((?x_4 Refnode) (?y_5 Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_4 ?y_5  )
+            )
+            (exists ((?u_6 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_4
+                        (ref next ?u_6) 
+                    ) 
+                    (ls_odd ?u_6 ?y_5) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ls_odd ((?x_7 Refnode) (?y_8 Refnode) ) 
+ Space 
+    (tospace (or 
+            (tobool (pto ?x_7
+                (ref next ?y_8) 
+            ) ) 
+            (exists ((?u_9 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_7
+                        (ref next ?u_9) 
+                    ) 
+                    (ls_even ?u_9 ?y_8) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ls_all ((?x_10 Refnode) (?y_11 Refnode) ) 
+        Space 
+    (tospace (or 
+            (tobool (ls_even ?x_10 ?y_11) )
+            (tobool (ls_odd ?x_10 ?y_11) )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x1 () Refnode)
+(declare-fun y () Refnode)
+(declare-fun x () Refnode)
+
+(assert (tobool (ssep 
+        (ls x1 y) 
+        (ls_even x x1) 
+    ) ) 
+ )
+
+(assert (not (tobool (ls x y) ) )
+ )
+(check-sat)

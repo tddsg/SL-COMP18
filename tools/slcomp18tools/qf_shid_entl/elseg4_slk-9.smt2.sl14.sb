@@ -1,0 +1,14 @@
+
+data Refnode {
+    Refnode nxt;
+};
+
+pred elseg(in,p) := 
+    (emp & in=p)
+    \/ (exists a,b. in->Refnode{nxt:a} * a->Refnode{nxt:b} * elseg(b,p));
+
+pred right(in,p) := (exists u. elseg(in,u) * elseg(u,p));
+
+
+checkentail z->Refnode{nxt:a} * a->Refnode{nxt:b} * elseg(b,p)
+    |- right(z,p);

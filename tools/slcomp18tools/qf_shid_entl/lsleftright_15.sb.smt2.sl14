@@ -1,0 +1,96 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun lsl ((?x_2 Refnode) (?y_3 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_2 ?y_3  )
+            )
+            (exists ((?u_4 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_2
+                        (ref next ?u_4) 
+                    ) 
+                    (lsl ?u_4 ?y_3) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun lsr ((?x_5 Refnode) (?y_6 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_5 ?y_6  )
+            )
+            (exists ((?u_7 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?u_7
+                        (ref next ?y_6) 
+                    ) 
+                    (lsr ?x_5 ?u_7) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun lslr ((?x_8 Refnode) (?y_9 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_8 ?y_9  )
+            )
+            (exists ((?u_10 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_8
+                        (ref next ?u_10) 
+                    ) 
+                    (lslr ?u_10 ?y_9) 
+                ) ) 
+            ) 
+            (exists ((?u_11 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?u_11
+                        (ref next ?y_9) 
+                    ) 
+                    (lslr ?x_8 ?u_11) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun lsa ((?x_12 Refnode) (?y_13 Refnode) ) 
+        Space 
+    (tospace (or 
+            (tobool (lsl ?x_12 ?y_13) )
+            (tobool (lsr ?x_12 ?y_13) )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun x1 () Refnode)
+(declare-fun x2 () Refnode)
+(declare-fun y () Refnode)
+
+(assert (tobool (ssep 
+        (lsa x x1) 
+        (lsr x1 x2) 
+        (lsr x2 y) 
+    ) ) 
+ )
+
+(assert (not (tobool (lslr x y) ) )
+ )
+(check-sat)

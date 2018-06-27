@@ -1,0 +1,64 @@
+(set-logic QF_S)
+(set-info :source | 
+  R. Iosif, A. Rogalewicz and T. Vojnar. 
+  Deciding Entailments in Inductive Separation Logic with Tree Automata arXiv:1402.2127. 
+  http://www.fit.vutbr.cz/research/groups/verifit/tools/slide/ 
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefDLL_t 0)
+;; Declare cell type DLL_t
+(declare-fun prev () (Field RefDLL_t RefDLL_t) )
+(declare-fun next () (Field RefDLL_t RefDLL_t) )
+
+;; IGNORE declare-heap 
+(define-fun DLL_plus ((?hd RefDLL_t) (?p RefDLL_t) (?tl RefDLL_t) (?n RefDLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?tl  )
+                (tobool (pto ?hd
+                    (sref (ref prev ?p) (ref next ?n) ) 
+                ) ) 
+            )
+            (exists ((?x RefDLL_t) ) 
+                (tobool (ssep 
+                    (pto ?hd
+                        (sref (ref prev ?p) (ref next ?x) ) 
+                    ) 
+                    (DLL_plus ?x ?hd ?tl ?n) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun DLL ((?hd RefDLL_t) (?p RefDLL_t) (?tl RefDLL_t) (?n RefDLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?p ?tl  )
+                (= ?hd ?n  )
+                (tobool emp ) 
+            )
+            (exists ((?x RefDLL_t) ) 
+                (tobool (ssep 
+                    (pto ?hd
+                        (sref (ref prev ?p) (ref next ?x) ) 
+                    ) 
+                    (DLL ?x ?hd ?tl ?n) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun a () RefDLL_t)
+(declare-fun c () RefDLL_t)
+
+(assert (tobool (DLL_plus a nil  c nil ) )
+ )
+
+(assert (not (tobool (DLL a nil  c nil ) ) )
+ )
+(check-sat)

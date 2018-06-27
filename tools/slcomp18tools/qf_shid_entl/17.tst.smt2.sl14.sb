@@ -1,0 +1,18 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred BinTree(x) := 
+    (emp)
+    \/ (exists yp,xp. x->RefGTyp{f0:yp,f1:xp} * BinTree(yp) * BinTree(xp) & nil!=x);
+
+pred BinTreeSeg(x,y) := 
+    (emp & x=y)
+    \/ (exists xp,yp. x->RefGTyp{f0:xp,f1:yp} * BinTreeSeg(xp,y) * BinTree(yp) & nil!=x)
+    \/ (exists xp,yp. x->RefGTyp{f0:xp,f1:yp} * BinTree(xp) * BinTreeSeg(yp,y) & nil!=x);
+
+
+checkentail BinTreeSeg(x,z) * BinTreeSeg(z,y)
+    |- BinTreeSeg(x,y);

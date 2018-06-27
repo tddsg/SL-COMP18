@@ -1,0 +1,56 @@
+(set-logic QF_S)
+(set-info :source |
+  James Brotherston, Nikos Gorogiannis, and Rasmus Petersen
+  A Generic Cyclic Theorem Prover. APLAS, 2012.
+  https://github.com/ngorogiannis/cyclist
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2014-05-31")
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun ls ((?x RefGTyp) (?y RefGTyp) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?x ?y  )
+                (tobool emp ) 
+            )
+            (exists ((?xp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (distinct ?x ?y  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (ref f0 ?xp) 
+                        ) 
+                        (ls ?xp ?y) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefGTyp)
+(declare-fun y () RefGTyp)
+(declare-fun z () RefGTyp)
+
+(assert (and 
+        (distinct x z  )
+        (tobool (ssep 
+            (pto x
+                (ref f0 y) 
+            ) 
+            (ls y z) 
+        ) ) 
+    )
+ )
+
+(assert (not (tobool (ls x z) ) )
+ )
+(check-sat)

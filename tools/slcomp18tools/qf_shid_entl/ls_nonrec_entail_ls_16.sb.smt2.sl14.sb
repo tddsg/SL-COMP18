@@ -1,0 +1,17 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ls(x_2,y_3) := 
+    (emp & x_2=y_3)
+    \/ (exists u_4. x_2->Refnode{next:u_4} * ls(u_4,y_3));
+
+pred ls_nonrec(x_5,y_6) := 
+    (emp & x_5=y_6)
+    \/ (exists u_7. x_5->Refnode{next:u_7} * ls(u_7,y_6))
+    \/ (exists u_8,v_9. u_8->Refnode{next:v_9} * x_5->Refnode{next:u_8} * ls(v_9,y_6));
+
+
+checkentail ls_nonrec(x,x1) * ls_nonrec(x1,x2) * ls_nonrec(x2,x3) * ls_nonrec(x3,x4) * ls_nonrec(x4,x5) * ls_nonrec(x5,x6) * ls_nonrec(x6,x7) * ls_nonrec(x7,x8) * ls_nonrec(x8,x9)
+    |- ls(x,x9);

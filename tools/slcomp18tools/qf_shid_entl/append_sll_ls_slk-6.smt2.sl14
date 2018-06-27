@@ -1,0 +1,133 @@
+(set-logic QF_S)
+(set-info :source |  Sleek solver
+  http://loris-7.ddns.comp.nus.edu.sg/~project/s2/beta/
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun ll ((?in Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?in  )
+                (tobool emp ) 
+            )
+            (exists ((?q_20 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?in
+                        (ref next ?q_20) 
+                    ) 
+                    (ll ?q_20) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun lseg ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?in ?p  )
+                (tobool emp ) 
+            )
+            (exists ((?p_19 Refnode) (?q_18 Refnode) ) 
+                (and 
+                    (= ?p ?p_19  )
+                    (tobool (ssep 
+                        (pto ?in
+                            (ref next ?q_18) 
+                        ) 
+                        (lseg ?q_18 ?p_19) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun ll_e1 ((?in Refnode) ) 
+ Space 
+    (tospace (exists ((?q Refnode) ) 
+            (tobool (ssep 
+                (pto ?in
+                    (ref next ?q) 
+                ) 
+                (ll ?q) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun ll_e2 ((?in Refnode) ) 
+ Space 
+    (tospace (exists ((?p Refnode) (?q Refnode) ) 
+            (and 
+                (= ?p ?q  )
+                (tobool (ssep 
+                    (pto ?in
+                        (ref next ?p) 
+                    ) 
+                    (ll ?q) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun node_e1 ((?in Refnode) (?q Refnode) ) 
+ Space 
+    (tospace (exists ((?p Refnode) ) 
+            (and 
+                (= ?q ?p  )
+                (tobool (pto ?in
+                    (ref next ?p) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun lseg_e1 ((?in Refnode) (?p Refnode) ) 
+ Space 
+    (tospace (exists ((?q Refnode) ) 
+            (and 
+                (= ?p ?q  )
+                (tobool (lseg ?in ?p) )
+            )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun xprm () Refnode)
+(declare-fun yprm () Refnode)
+(declare-fun y () Refnode)
+(declare-fun x () Refnode)
+(declare-fun q () Refnode)
+
+(assert (and 
+        (= nil  q  )
+        (= xprm x  )
+        (= yprm y  )
+        (distinct nil  x  )
+        (tobool (ssep 
+            (ll q) 
+            (pto xprm
+                (ref next q) 
+            ) 
+        ) ) 
+    )
+ )
+
+(assert (not (and 
+        (= nil  q  )
+        (= xprm x  )
+        (= yprm y  )
+        (distinct nil  x  )
+        (tobool (ssep 
+            (node_e1 xprm q) 
+            (ll q) 
+        ) ) 
+    ) )
+ )
+(check-sat)

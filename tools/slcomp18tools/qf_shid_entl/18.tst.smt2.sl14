@@ -1,0 +1,83 @@
+(set-logic QF_S)
+(set-info :source |
+  James Brotherston, Nikos Gorogiannis, and Rasmus Petersen
+  A Generic Cyclic Theorem Prover. APLAS, 2012.
+  https://github.com/ngorogiannis/cyclist
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2014-05-31")
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+(declare-fun f1 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun BinTree ((?x RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (tobool emp ) 
+            (exists ((?yp RefGTyp) (?xp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?yp) (ref f1 ?xp) ) 
+                        ) 
+                        (BinTree ?yp) 
+                        (BinTree ?xp) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun BinTreeSeg ((?x RefGTyp) (?y RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?x ?y  )
+                (tobool emp ) 
+            )
+            (exists ((?xp RefGTyp) (?yp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?xp) (ref f1 ?yp) ) 
+                        ) 
+                        (BinTreeSeg ?xp ?y) 
+                        (BinTree ?yp) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?xp RefGTyp) (?yp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?xp) (ref f1 ?yp) ) 
+                        ) 
+                        (BinTree ?xp) 
+                        (BinTreeSeg ?yp ?y) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefGTyp)
+(declare-fun y () RefGTyp)
+(declare-fun z () RefGTyp)
+
+(assert (tobool (ssep 
+        (BinTreeSeg x y) 
+        (BinTree y) 
+    ) ) 
+ )
+
+(assert (not (tobool (BinTree x) ) )
+ )
+(check-sat)

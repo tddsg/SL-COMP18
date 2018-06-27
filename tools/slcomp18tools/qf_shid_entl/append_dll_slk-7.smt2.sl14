@@ -1,0 +1,142 @@
+(set-logic QF_S)
+(set-info :source |  Sleek solver
+  http://loris-7.ddns.comp.nus.edu.sg/~project/s2/beta/
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode2 0)
+;; Declare cell type node2
+(declare-fun prev () (Field Refnode2 Refnode2) )
+(declare-fun next () (Field Refnode2 Refnode2) )
+
+;; IGNORE declare-heap 
+(define-fun dll ((?in Refnode2) (?p Refnode2) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?in  )
+                (tobool emp ) 
+            )
+            (exists ((?p_20 Refnode2) (?self_21 Refnode2) (?q_19 Refnode2) ) 
+                (and 
+                    (= ?p ?p_20  )
+                    (= ?in ?self_21  )
+                    (tobool (ssep 
+                        (pto ?in
+                            (sref (ref prev ?p_20) (ref next ?q_19) ) 
+                        ) 
+                        (dll ?q_19 ?self_21) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun dll_e1 ((?in Refnode2) (?q Refnode2) ) 
+ Space 
+    (tospace (exists ((?p1 Refnode2) (?s Refnode2) (?q1 Refnode2) ) 
+            (and 
+                (= ?in ?s  )
+                (= ?q ?p1  )
+                (tobool (ssep 
+                    (dll ?q1 ?s) 
+                    (pto ?in
+                        (sref (ref prev ?p1) (ref next ?q1) ) 
+                    ) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun dll_e2 ((?in Refnode2) (?q Refnode2) ) 
+ Space 
+    (tospace (exists ((?s Refnode2) (?p1 Refnode2) (?p2 Refnode2) (?n Refnode2) (?q1 Refnode2) ) 
+            (and 
+                (= ?n ?q1  )
+                (= ?p1 ?p2  )
+                (= ?in ?s  )
+                (= ?q ?p2  )
+                (tobool (ssep 
+                    (pto ?in
+                        (sref (ref prev ?p1) (ref next ?n) ) 
+                    ) 
+                    (dll ?q1 ?s) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun node2_e1 ((?in Refnode2) (?p Refnode2) (?q Refnode2) ) 
+ Space 
+    (tospace (exists ((?p1 Refnode2) (?n1 Refnode2) ) 
+            (and 
+                (= ?p ?p1  )
+                (= ?q ?n1  )
+                (tobool (pto ?in
+                    (sref (ref prev ?p1) (ref next ?n1) ) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun dll_e3 ((?in Refnode2) (?p Refnode2) ) 
+ Space 
+    (tospace (exists ((?q Refnode2) ) 
+            (and 
+                (= ?p ?q  )
+                (tobool (dll ?in ?q) )
+            )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun yprm () Refnode2)
+(declare-fun xprm () Refnode2)
+(declare-fun next0 () Refnode2)
+(declare-fun q () Refnode2)
+(declare-fun y () Refnode2)
+(declare-fun x () Refnode2)
+(declare-fun q1 () Refnode2)
+(declare-fun p1 () Refnode2)
+(declare-fun self () Refnode2)
+(declare-fun p () Refnode2)
+
+(assert (and 
+        (distinct nil  yprm  )
+        (= next0 q  )
+        (= nil  q  )
+        (= xprm x  )
+        (= yprm y  )
+        (distinct nil  x  )
+        (= xprm self  )
+        (= q1 p  )
+        (tobool (ssep 
+            (dll_e1 yprm p1) 
+            (dll q self) 
+            (pto xprm
+                (sref (ref prev p) (ref next yprm) ) 
+            ) 
+        ) ) 
+    )
+ )
+
+(assert (not (and 
+        (distinct nil  yprm  )
+        (= next0 q  )
+        (= nil  q  )
+        (= xprm x  )
+        (= yprm y  )
+        (distinct nil  x  )
+        (= xprm self  )
+        (= q1 p  )
+        (tobool (ssep 
+            (dll_e2 yprm p1) 
+            (dll q self) 
+            (pto xprm
+                (sref (ref prev p) (ref next yprm) ) 
+            ) 
+        ) ) 
+    ) )
+ )
+(check-sat)

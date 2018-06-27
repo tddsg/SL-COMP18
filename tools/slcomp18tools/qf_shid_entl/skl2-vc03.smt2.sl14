@@ -1,0 +1,101 @@
+(set-logic QF_S)
+(set-info :source |
+C. Enea, O. Lengal, M. Sighireanu, and T. Vojnar
+[Compositional Entailment Checking for a Fragment of Separation Logic]
+http://www.liafa.univ-paris-diderot.fr/spen
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefSL2_t 0)
+;; Declare cell type SL2_t
+(declare-fun n1 () (Field RefSL2_t RefSL2_t) )
+(declare-fun n2 () (Field RefSL2_t RefSL2_t) )
+
+;; IGNORE declare-heap 
+(define-fun skl1 ((?hd RefSL2_t) (?ex RefSL2_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL2_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?tl) (ref n2 nil ) ) 
+                        ) 
+                        (skl1 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun skl2 ((?hd RefSL2_t) (?ex RefSL2_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL2_t) (?Z1 RefSL2_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?Z1) (ref n2 ?tl) ) 
+                        ) 
+                        (skl1 ?Z1 ?tl) 
+                        (skl2 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x1 () RefSL2_t)
+(declare-fun x1_1 () RefSL2_t)
+(declare-fun x1_2 () RefSL2_t)
+(declare-fun x1_3 () RefSL2_t)
+(declare-fun x1_4 () RefSL2_t)
+(declare-fun x2 () RefSL2_t)
+(declare-fun x3 () RefSL2_t)
+(declare-fun x3_1 () RefSL2_t)
+(declare-fun x3_2 () RefSL2_t)
+
+(assert (tobool (ssep 
+        (pto x1
+            (sref (ref n1 x1_1) (ref n2 x2) ) 
+        ) 
+        (pto x1_1
+            (sref (ref n1 x1_2) (ref n2 nil ) ) 
+        ) 
+        (pto x1_2
+            (sref (ref n1 x1_3) (ref n2 nil ) ) 
+        ) 
+        (pto x1_3
+            (sref (ref n1 x1_4) (ref n2 nil ) ) 
+        ) 
+        (pto x1_4
+            (sref (ref n1 x2) (ref n2 nil ) ) 
+        ) 
+        (skl2 x2 x3) 
+        (pto x3
+            (sref (ref n1 x3_1) (ref n2 nil ) ) 
+        ) 
+        (pto x3_1
+            (sref (ref n1 x3_2) (ref n2 nil ) ) 
+        ) 
+        (pto x3_2
+            (sref (ref n1 nil ) (ref n2 nil ) ) 
+        ) 
+    ) ) 
+ )
+
+(assert (not (tobool (skl2 x1 nil ) ) )
+ )
+(check-sat)

@@ -1,0 +1,62 @@
+(set-logic QF_S)
+(set-info :source |
+  James Brotherston, Nikos Gorogiannis, and Rasmus Petersen
+  A Generic Cyclic Theorem Prover. APLAS, 2012.
+  https://github.com/ngorogiannis/cyclist
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2014-05-31")
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+(declare-fun f1 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun BinPath ((?x RefGTyp) (?y RefGTyp) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?x ?y  )
+                (tobool emp ) 
+            )
+            (exists ((?xp RefGTyp) (?yp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?xp) (ref f1 ?yp) ) 
+                        ) 
+                        (BinPath ?xp ?y) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?xp RefGTyp) (?yp RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?xp) (ref f1 ?yp) ) 
+                        ) 
+                        (BinPath ?yp ?y) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefGTyp)
+(declare-fun y () RefGTyp)
+(declare-fun z () RefGTyp)
+
+(assert (tobool (ssep 
+        (BinPath x z) 
+        (BinPath z y) 
+    ) ) 
+ )
+
+(assert (not (tobool (BinPath x y) ) )
+ )
+(check-sat)

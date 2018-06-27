@@ -1,0 +1,107 @@
+(set-logic QF_S)
+(set-info :source | 
+  R. Iosif, A. Rogalewicz and T. Vojnar. 
+  Deciding Entailments in Inductive Separation Logic with Tree Automata arXiv:1402.2127. 
+  http://www.fit.vutbr.cz/research/groups/verifit/tools/slide/ 
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefTPP_t 0)
+;; Declare cell type TPP_t
+(declare-fun left () (Field RefTPP_t RefTPP_t) )
+(declare-fun right () (Field RefTPP_t RefTPP_t) )
+(declare-fun parent () (Field RefTPP_t RefTPP_t) )
+
+;; IGNORE declare-heap 
+(define-fun TPP_plus ((?x RefTPP_t) (?back RefTPP_t) ) 
+ Space 
+    (tospace (or 
+            (tobool (pto ?x
+                (sref (ref left nil ) (ref right nil ) (ref parent ?back) ) 
+            ) ) 
+            (exists ((?y RefTPP_t) (?z RefTPP_t) ) 
+                (tobool (ssep 
+                    (pto ?x
+                        (sref (ref left ?y) (ref right ?z) (ref parent ?back) ) 
+                    ) 
+                    (TPP_plus ?y ?x) 
+                    (TPP_plus ?z ?x) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun TPP_aux ((?x RefTPP_t) (?down RefTPP_t) (?top RefTPP_t) (?b RefTPP_t) ) 
+ Space 
+    (tospace (or 
+            (exists ((?up RefTPP_t) (?right RefTPP_t) ) 
+                (tobool (ssep 
+                    (pto ?x
+                        (sref (ref left ?down) (ref right ?right) (ref parent ?up) ) 
+                    ) 
+                    (TPP_plus ?right ?x) 
+                    (TPP_aux ?up ?x ?top ?b) 
+                ) ) 
+            ) 
+            (exists ((?up RefTPP_t) (?left RefTPP_t) ) 
+                (tobool (ssep 
+                    (pto ?x
+                        (sref (ref left ?left) (ref right ?down) (ref parent ?up) ) 
+                    ) 
+                    (TPP_plus ?left ?x) 
+                    (TPP_aux ?up ?x ?top ?b) 
+                ) ) 
+            ) 
+            (exists ((?right RefTPP_t) ) 
+                (and 
+                    (= ?x ?top  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref left ?down) (ref right ?right) (ref parent ?b) ) 
+                        ) 
+                        (TPP_plus ?right ?x) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?left RefTPP_t) ) 
+                (and 
+                    (= ?x ?top  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref left ?left) (ref right ?down) (ref parent ?b) ) 
+                        ) 
+                        (TPP_plus ?left ?x) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun TPP_plus_rev ((?top RefTPP_t) (?b RefTPP_t) ) 
+ Space 
+    (tospace (or 
+            (tobool (pto ?top
+                (sref (ref left nil ) (ref right nil ) (ref parent ?b) ) 
+            ) ) 
+            (exists ((?x RefTPP_t) (?up RefTPP_t) ) 
+                (tobool (ssep 
+                    (pto ?x
+                        (sref (ref left nil ) (ref right nil ) (ref parent ?up) ) 
+                    ) 
+                    (TPP_aux ?up ?x ?top ?b) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefTPP_t)
+(declare-fun y () RefTPP_t)
+
+(assert (tobool (TPP_plus x y) )
+ )
+
+(assert (not (tobool (TPP_plus_rev x y) ) )
+ )
+(check-sat)

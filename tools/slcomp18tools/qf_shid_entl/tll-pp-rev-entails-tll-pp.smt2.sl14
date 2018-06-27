@@ -1,0 +1,99 @@
+(set-logic QF_S)
+(set-info :source | 
+  R. Iosif, A. Rogalewicz and T. Vojnar. 
+  Deciding Entailments in Inductive Separation Logic with Tree Automata arXiv:1402.2127. 
+  http://www.fit.vutbr.cz/research/groups/verifit/tools/slide/ 
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefTLL_t 0)
+;; Declare cell type TLL_t
+(declare-fun left () (Field RefTLL_t RefTLL_t) )
+(declare-fun right () (Field RefTLL_t RefTLL_t) )
+(declare-fun next () (Field RefTLL_t RefTLL_t) )
+(declare-fun parent () (Field RefTLL_t RefTLL_t) )
+
+;; IGNORE declare-heap 
+(define-fun TLL_plus ((?root RefTLL_t) (?pra RefTLL_t) (?ll RefTLL_t) (?lr RefTLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?root ?ll  )
+                (tobool (pto ?root
+                    (sref (ref left nil ) (ref right nil ) (ref next ?lr) (ref parent ?pra) ) 
+                ) ) 
+            )
+            (exists ((?l RefTLL_t) (?r RefTLL_t) (?z RefTLL_t) ) 
+                (tobool (ssep 
+                    (pto ?root
+                        (sref (ref left ?l) (ref right ?r) (ref next nil ) (ref parent ?pra) ) 
+                    ) 
+                    (TLL_plus ?l ?root ?ll ?z) 
+                    (TLL_plus ?r ?root ?z ?lr) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun TLL_aux ((?x RefTLL_t) (?p RefTLL_t) (?z RefTLL_t) (?back RefTLL_t) (?top RefTLL_t) (?mright RefTLL_t) ) 
+ Space 
+    (tospace (or 
+            (exists ((?up RefTLL_t) (?r RefTLL_t) (?lr RefTLL_t) ) 
+                (tobool (ssep 
+                    (pto ?x
+                        (sref (ref left ?back) (ref right ?r) (ref next nil ) (ref parent ?up) ) 
+                    ) 
+                    (TLL_aux ?up ?p ?lr ?x ?top ?mright) 
+                    (TLL_plus ?r ?x ?z ?lr) 
+                ) ) 
+            ) 
+            (exists ((?r RefTLL_t) ) 
+                (and 
+                    (= ?x ?top  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref left ?back) (ref right ?r) (ref next nil ) (ref parent ?p) ) 
+                        ) 
+                        (TLL_plus ?r ?x ?z ?mright) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun TLL_plus_rev ((?top RefTLL_t) (?p RefTLL_t) (?mleft RefTLL_t) (?mright RefTLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?top ?mleft  )
+                (tobool (pto ?top
+                    (sref (ref left nil ) (ref right nil ) (ref next ?mright) (ref parent ?p) ) 
+                ) ) 
+            )
+            (exists ((?x RefTLL_t) (?up RefTLL_t) (?lr RefTLL_t) ) 
+                (and 
+                    (= ?mleft ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref left nil ) (ref right nil ) (ref next ?lr) (ref parent ?up) ) 
+                        ) 
+                        (TLL_aux ?up ?p ?lr ?x ?top ?mright) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefTLL_t)
+(declare-fun y () RefTLL_t)
+(declare-fun u () RefTLL_t)
+(declare-fun v () RefTLL_t)
+
+(assert (tobool (TLL_plus_rev x y u v) )
+ )
+
+(assert (not (tobool (TLL_plus x y u v) ) )
+ )
+(check-sat)

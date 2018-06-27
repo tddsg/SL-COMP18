@@ -1,0 +1,12 @@
+
+data Refnode {
+    Refnode nxt;
+};
+
+pred olseg(in,p) := 
+    (in->Refnode{nxt:p})
+    \/ (exists a,b. in->Refnode{nxt:a} * a->Refnode{nxt:b} * olseg(b,p));
+
+
+checkentail k->Refnode{nxt:b} * olseg(b,p) * p->Refnode{nxt:a} * a->Refnode{nxt:b} * b->Refnode{nxt:g}
+    |- olseg(k,g);
