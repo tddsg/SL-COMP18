@@ -8,14 +8,16 @@ SL2SL=../smtlib2Xparser-sl/slcomp-parser
 SL2SOLVER=../slcomp14tools/compile
 
 BENCHS=`ls -d $BROOT/*/`
-BRN=`basename $BROOT`"_"$PROVER
+BRN=`basename $BROOT`"_"$SOLVER
+echo "* Make benchmark root folder: $BRN"
 mkdir $BRN
 
 for b in $BENCHS; do
     BN=`basename $b`
     BP=$BRN"/"$BN
+    echo "* Make benchmark sub folder: $BP"
     mkdir $BP -p
-    FILES=`ls $b/*.smt2`
+    FILES=`ls $b*.smt2`
     for f in $FILES; do
         OFILE=`basename $f`
         echo "* File $f"
