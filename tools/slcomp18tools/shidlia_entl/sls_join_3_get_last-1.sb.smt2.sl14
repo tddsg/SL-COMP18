@@ -1,0 +1,69 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+(declare-fun val () (Field Refnode Int) )
+
+;; IGNORE declare-heap 
+(define-fun sls ((?x_1 Refnode) (?y_2 Refnode) (?l_3 Int) (?u_4 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?x_1
+                    (sref (ref next ?y_2) (ref val ?l_3) ) 
+                ) ) 
+                (= ?l_3 ?u_4  )
+            )
+            (exists ((?t_5 Refnode) (?a_6 Int) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?x_1
+                            (sref (ref next ?t_5) (ref val ?l_3) ) 
+                        ) 
+                        (sls ?t_5 ?y_2 ?a_6 ?u_4) 
+                    ) ) 
+                    (and 
+                        (<= ?a_6 ?u_4) 
+                        (<= ?l_3 ?a_6) 
+                    )
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun y () Refnode)
+(declare-fun l1 () Int)
+(declare-fun z () Refnode)
+(declare-fun l2 () Int)
+(declare-fun t () Refnode)
+(declare-fun u3 () Int)
+
+(assert (and 
+        (tobool (ssep 
+            (sls x y l1 100) 
+            (sls y z l2 200) 
+            (sls z t 201 u3) 
+        ) ) 
+        (<= 100 l2) 
+    )
+ )
+
+(assert (not (exists ((?r Refnode) (?l3 Int) (?l4 Int) (?l5 Int) ) 
+        (and 
+            (tobool (ssep 
+                (pto ?r
+                    (sref (ref next t) (ref val ?l5) ) 
+                ) 
+                (sls x ?r ?l3 ?l4) 
+            ) ) 
+            (<= ?l4 ?l5) 
+        )
+    )  )
+ )
+(check-sat)

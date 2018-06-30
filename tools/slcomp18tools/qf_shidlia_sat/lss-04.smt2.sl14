@@ -1,0 +1,50 @@
+(set-logic QF_S)
+(set-info :source |
+  Quang Loc Le.
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2018-06-22")
+(declare-sort RefSll_t 0)
+;; Declare cell type Sll_t
+(declare-fun left () (Field RefSll_t RefSll_t) )
+(declare-fun right () (Field RefSll_t RefSll_t) )
+
+;; IGNORE declare-heap 
+(define-fun lss ((?x RefSll_t) (?y RefSll_t) (?len1 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?y nil   )
+                (= ?len1 1  )
+                (tobool (pto ?x
+                    (sref (ref left nil ) (ref right ?y) ) 
+                ) ) 
+            )
+            (exists ((?x1 RefSll_t) (?y1 RefSll_t) (?n1 Int) ) 
+                (and 
+                    (= ?len1 (+ ?n1 2)   )
+                    (tobool (ssep 
+                        (pto ?y
+                            (sref (ref left ?x1) (ref right ?y1) ) 
+                        ) 
+                        (lss ?x ?y1 ?n1) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefSll_t)
+(declare-fun y () RefSll_t)
+(declare-fun n1 () Int)
+
+(assert (and 
+        (> n1 320001) 
+        (= x y  )
+        (tobool (lss x y n1) )
+    )
+ )
+(check-sat)

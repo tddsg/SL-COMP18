@@ -1,0 +1,76 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun left () (Field Refnode Refnode) )
+(declare-fun right () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun tree ((?x_3 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= nil  ?x_3  )
+            )
+            (exists ((?l_4 Refnode) (?r_5 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_3
+                        (sref (ref left ?l_4) (ref right ?r_5) ) 
+                    ) 
+                    (tree ?l_4) 
+                    (tree ?r_5) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun tseg ((?x_6 Refnode) (?y_7 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (= ?x_6 ?y_7  )
+            )
+            (exists ((?l_8 Refnode) (?r_9 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_6
+                        (sref (ref left ?l_8) (ref right ?r_9) ) 
+                    ) 
+                    (tree ?l_8) 
+                    (tseg ?r_9 ?y_7) 
+                ) ) 
+            ) 
+            (exists ((?l_10 Refnode) (?r_11 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?x_6
+                        (sref (ref left ?l_10) (ref right ?r_11) ) 
+                    ) 
+                    (tree ?r_11) 
+                    (tseg ?l_10 ?y_7) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun y () Refnode)
+
+(assert (tobool (ssep 
+        (tree x) 
+        (tree y) 
+    ) ) 
+ )
+
+(assert (not (exists ((?u Refnode) (?v Refnode) ) 
+        (tobool (ssep 
+            (tseg ?u nil ) 
+            (tseg ?v nil ) 
+        ) ) 
+    )  )
+ )
+(check-sat)

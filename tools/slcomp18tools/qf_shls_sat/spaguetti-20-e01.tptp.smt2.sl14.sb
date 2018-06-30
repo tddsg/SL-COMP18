@@ -1,0 +1,12 @@
+
+data RefSll_t {
+    RefSll_t next;
+};
+
+pred ls(in,out) := 
+    (emp & in=out)
+    \/ (exists u. in->RefSll_t{next:u} * ls(u,out) & in!=out);
+
+
+checkentail ls(x5,x17) * ls(x19,x1) * ls(x4,x12) * ls(x12,x20) * ls(x12,x15) * ls(x12,x11) * ls(x2,x18) * ls(x17,x14) * ls(x7,x16) * ls(x3,x20) * ls(x3,x12) * ls(x11,x12) * ls(x6,x17) * ls(x6,x19) & nil=nil & x6!=x19 & x3!=x7 & x3!=x20 & x7!=x20 & x9!=x19 & x2!=x20 & x8!=x19 & x8!=x17 & x4!=x11 & x4!=x13 & x4!=x19 & x1!=x16 & x1!=x20 & x13!=x18 & x13!=x17 & x10!=x19 & x10!=x20 & x16!=x19
+    |- false;

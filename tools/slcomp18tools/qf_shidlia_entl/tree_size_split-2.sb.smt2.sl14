@@ -1,0 +1,97 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun left () (Field Refnode Refnode) )
+(declare-fun right () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun tree ((?x_5 Refnode) (?s_6 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (and 
+                    (= nil  ?x_5  )
+                    (= ?s_6 0  )
+                )
+            )
+            (exists ((?l_7 Refnode) (?r_8 Refnode) (?s2_10 Int) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?x_5
+                            (sref (ref left ?l_7) (ref right ?r_8) ) 
+                        ) 
+                        (tree ?l_7 (+ (* (- 1)  ?s2_10)  ?s_6 (- 1) ) ) 
+                        (tree ?r_8 ?s2_10) 
+                    ) ) 
+                    (and 
+                        (<= 0 ?s2_10) 
+                        (<= 0 (+ (* (- 1)  ?s2_10)  ?s_6 (- 1) ) ) 
+                    )
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun tseg ((?x_11 Refnode) (?y_12 Refnode) (?s_13 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool emp ) 
+                (and 
+                    (= ?s_13 0  )
+                    (= ?x_11 ?y_12  )
+                )
+            )
+            (exists ((?l_14 Refnode) (?r_15 Refnode) (?s2_17 Int) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?x_11
+                            (sref (ref left ?l_14) (ref right ?r_15) ) 
+                        ) 
+                        (tree ?l_14 (+ (* (- 1)  ?s2_17)  ?s_13 (- 1) ) ) 
+                        (tseg ?r_15 ?y_12 ?s2_17) 
+                    ) ) 
+                    (<= 0 (+ (* (- 1)  ?s2_17)  ?s_13 (- 1) ) ) 
+                )
+            ) 
+            (exists ((?l_18 Refnode) (?r_19 Refnode) (?s2_21 Int) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?x_11
+                            (sref (ref left ?l_18) (ref right ?r_19) ) 
+                        ) 
+                        (tree ?r_19 ?s2_21) 
+                        (tseg ?l_18 ?y_12 (+ (* (- 1)  ?s2_21)  ?s_13 (- 1) ) ) 
+                    ) ) 
+                    (<= 0 ?s2_21) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun n () Int)
+
+(assert (tobool (tree x n) )
+ )
+
+(assert (not (exists ((?u Refnode) (?m Int) (?l Int) ) 
+        (and 
+            (tobool (ssep 
+                (tree ?u ?l) 
+                (tseg x ?u ?m) 
+            ) ) 
+            (and 
+                (<= 1 ?m) 
+                (<= ?l 8) 
+            )
+        )
+    )  )
+ )
+(check-sat)

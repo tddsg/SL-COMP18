@@ -1,0 +1,103 @@
+(set-logic QF_S)
+(set-info :source |
+C. Enea, O. Lengal, M. Sighireanu, and T. Vojnar
+[Compositional Entailment Checking for a Fragment of Separation Logic]
+http://www.liafa.univ-paris-diderot.fr/spen
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefSL3_t 0)
+;; Declare cell type SL3_t
+(declare-fun n1 () (Field RefSL3_t RefSL3_t) )
+(declare-fun n2 () (Field RefSL3_t RefSL3_t) )
+(declare-fun n3 () (Field RefSL3_t RefSL3_t) )
+
+;; IGNORE declare-heap 
+(define-fun skl1 ((?hd RefSL3_t) (?ex RefSL3_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL3_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?tl) (ref n2 nil ) (ref n3 nil ) ) 
+                        ) 
+                        (skl1 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun skl2 ((?hd RefSL3_t) (?ex RefSL3_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL3_t) (?Z1 RefSL3_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?Z1) (ref n2 ?tl) (ref n3 nil ) ) 
+                        ) 
+                        (skl1 ?Z1 ?tl) 
+                        (skl2 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun skl3 ((?hd RefSL3_t) (?ex RefSL3_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL3_t) (?Z1 RefSL3_t) (?Z2 RefSL3_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?Z1) (ref n2 ?Z2) (ref n3 ?tl) ) 
+                        ) 
+                        (skl1 ?Z1 ?Z2) 
+                        (skl2 ?Z2 ?tl) 
+                        (skl3 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x1 () RefSL3_t)
+(declare-fun x2 () RefSL3_t)
+(declare-fun x2_0_1 () RefSL3_t)
+(declare-fun x2_1 () RefSL3_t)
+(declare-fun x3 () RefSL3_t)
+
+(assert (tobool (ssep 
+        (skl3 x1 x2) 
+        (pto x2
+            (sref (ref n1 x2_0_1) (ref n2 x2_1) (ref n3 x3) ) 
+        ) 
+        (skl3 x3 nil ) 
+        (skl2 x2_1 x3) 
+        (skl1 x2_0_1 x2_1) 
+    ) ) 
+ )
+
+(assert (not (tobool (skl3 x1 nil ) ) )
+ )
+(check-sat)

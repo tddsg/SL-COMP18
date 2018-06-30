@@ -1,0 +1,75 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+(declare-fun prev () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun dll ((?hd_1 Refnode) (?p_2 Refnode) (?tl_3 Refnode) (?n_4 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?hd_1
+                    (sref (ref next ?n_4) (ref prev ?p_2) ) 
+                ) ) 
+                (= ?hd_1 ?tl_3  )
+            )
+            (exists ((?x_5 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?hd_1
+                        (sref (ref next ?x_5) (ref prev ?p_2) ) 
+                    ) 
+                    (dll ?x_5 ?hd_1 ?tl_3 ?n_4) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun dll_rev ((?hd_6 Refnode) (?p_7 Refnode) (?tl_8 Refnode) (?n_9 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?hd_6
+                    (sref (ref next ?n_9) (ref prev ?p_7) ) 
+                ) ) 
+                (= ?hd_6 ?tl_8  )
+            )
+            (exists ((?x_10 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?tl_8
+                        (sref (ref next ?n_9) (ref prev ?x_10) ) 
+                    ) 
+                    (dll_rev ?hd_6 ?p_7 ?x_10 ?tl_8) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun u () Refnode)
+(declare-fun v () Refnode)
+(declare-fun y () Refnode)
+(declare-fun x () Refnode)
+(declare-fun z () Refnode)
+(declare-fun t () Refnode)
+
+(assert (tobool (ssep 
+        (dll u v y x) 
+        (dll_rev x y z t) 
+    ) ) 
+ )
+
+(assert (not (exists ((?w Refnode) ) 
+        (tobool (ssep 
+            (pto z
+                (sref (ref next t) (ref prev ?w) ) 
+            ) 
+            (dll u v ?w z) 
+        ) ) 
+    )  )
+ )
+(check-sat)

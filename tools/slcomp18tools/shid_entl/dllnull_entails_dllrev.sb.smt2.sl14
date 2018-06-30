@@ -1,0 +1,60 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+(declare-fun prev () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun dll_rev ((?hd_1 Refnode) (?p_2 Refnode) (?tl_3 Refnode) (?n_4 Refnode) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?hd_1
+                    (sref (ref next ?n_4) (ref prev ?p_2) ) 
+                ) ) 
+                (= ?hd_1 ?tl_3  )
+            )
+            (exists ((?x_5 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?tl_3
+                        (sref (ref next ?n_4) (ref prev ?x_5) ) 
+                    ) 
+                    (dll_rev ?hd_1 ?p_2 ?x_5 ?tl_3) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun dllnull ((?hd_6 Refnode) (?p_7 Refnode) ) 
+        Space 
+    (tospace (or 
+            (tobool (pto ?hd_6
+                (sref (ref next nil ) (ref prev ?p_7) ) 
+            ) ) 
+            (exists ((?x_8 Refnode) ) 
+                (tobool (ssep 
+                    (pto ?hd_6
+                        (sref (ref next ?x_8) (ref prev ?p_7) ) 
+                    ) 
+                    (dllnull ?x_8 ?hd_6) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () Refnode)
+(declare-fun y () Refnode)
+
+(assert (tobool (dllnull x y) )
+ )
+
+(assert (not (exists ((?t Refnode) ) 
+        (tobool (dll_rev x y ?t nil ) )
+    )  )
+ )
+(check-sat)

@@ -1,0 +1,93 @@
+(set-logic QF_S)
+(set-info :source |
+Quang Loc Le Q.Le@tees.ac.uk
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-15")
+(declare-sort RefSL2_t 0)
+;; Declare cell type SL2_t
+(declare-fun n1 () (Field RefSL2_t RefSL2_t) )
+(declare-fun n2 () (Field RefSL2_t RefSL2_t) )
+
+;; IGNORE declare-heap 
+(define-fun skl1 ((?hd RefSL2_t) (?ex RefSL2_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL2_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?tl) (ref n2 nil ) ) 
+                        ) 
+                        (skl1 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun skl2 ((?hd RefSL2_t) (?ex RefSL2_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?ex  )
+                (tobool emp ) 
+            )
+            (exists ((?tl RefSL2_t) (?Z1 RefSL2_t) ) 
+                (and 
+                    (distinct ?hd ?ex  )
+                    (tobool (ssep 
+                        (pto ?hd
+                            (sref (ref n1 ?Z1) (ref n2 ?tl) ) 
+                        ) 
+                        (skl1 ?Z1 ?tl) 
+                        (skl2 ?tl ?ex) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x1 () RefSL2_t)
+(declare-fun x1_1 () RefSL2_t)
+(declare-fun x1_2 () RefSL2_t)
+(declare-fun x1_3 () RefSL2_t)
+(declare-fun x1_4 () RefSL2_t)
+(declare-fun x2 () RefSL2_t)
+(declare-fun x3 () RefSL2_t)
+(declare-fun x3_1 () RefSL2_t)
+(declare-fun x3_2 () RefSL2_t)
+(declare-fun x4 () RefSL2_t)
+(declare-fun x5 () RefSL2_t)
+(declare-fun x6 () RefSL2_t)
+
+(assert (tobool (ssep 
+        (skl2 x4 x5) 
+        (skl2 x5 x6) 
+        (pto x1
+            (sref (ref n1 x1_1) (ref n2 x2) ) 
+        ) 
+        (pto x1_1
+            (sref (ref n1 x1_2) (ref n2 nil ) ) 
+        ) 
+        (skl1 x1_2 x2) 
+        (pto x2
+            (sref (ref n1 nil ) (ref n2 nil ) ) 
+        ) 
+    ) ) 
+ )
+
+(assert (not (tobool (ssep 
+        (skl2 x1 nil ) 
+        (skl2 x4 x6) 
+    ) )  )
+ )
+(check-sat)

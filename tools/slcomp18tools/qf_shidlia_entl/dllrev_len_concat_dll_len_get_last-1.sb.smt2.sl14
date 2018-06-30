@@ -1,0 +1,91 @@
+(set-logic QF_S)
+(set-info :source | Songbird - https://songbird-prover.github.io/ |)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort Refnode 0)
+;; Declare cell type node
+(declare-fun next () (Field Refnode Refnode) )
+(declare-fun prev () (Field Refnode Refnode) )
+
+;; IGNORE declare-heap 
+(define-fun dll ((?hd_2 Refnode) (?p_3 Refnode) (?tl_4 Refnode) (?n_5 Refnode) (?len_6 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?hd_2
+                    (sref (ref next ?n_5) (ref prev ?p_3) ) 
+                ) ) 
+                (and 
+                    (= (+ ?len_6 (- 1) )  0  )
+                    (= ?hd_2 ?tl_4  )
+                )
+            )
+            (exists ((?x_7 Refnode) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?hd_2
+                            (sref (ref next ?x_7) (ref prev ?p_3) ) 
+                        ) 
+                        (dll ?x_7 ?hd_2 ?tl_4 ?n_5 (+ ?len_6 (- 1) ) ) 
+                    ) ) 
+                    (<= 1 (+ ?len_6 (- 1) ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun dll_rev ((?hd_8 Refnode) (?p_9 Refnode) (?tl_10 Refnode) (?n_11 Refnode) (?len_12 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (tobool (pto ?hd_8
+                    (sref (ref next ?n_11) (ref prev ?p_9) ) 
+                ) ) 
+                (and 
+                    (= (+ ?len_12 (- 1) )  0  )
+                    (= ?hd_8 ?tl_10  )
+                )
+            )
+            (exists ((?x_13 Refnode) ) 
+                (and 
+                    (tobool (ssep 
+                        (pto ?tl_10
+                            (sref (ref next ?n_11) (ref prev ?x_13) ) 
+                        ) 
+                        (dll_rev ?hd_8 ?p_9 ?x_13 ?tl_10 (+ ?len_12 (- 1) ) ) 
+                    ) ) 
+                    (<= 1 (+ ?len_12 (- 1) ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun v () Refnode)
+(declare-fun u () Refnode)
+(declare-fun z () Refnode)
+(declare-fun t () Refnode)
+(declare-fun x () Refnode)
+(declare-fun y () Refnode)
+(declare-fun n () Int)
+
+(assert (and 
+        (tobool (ssep 
+            (dll v u z t 200) 
+            (dll_rev x y u v n) 
+        ) ) 
+        (<= 100 n) 
+    )
+ )
+
+(assert (not (exists ((?u_1 Refnode) ) 
+        (tobool (ssep 
+            (pto z
+                (sref (ref next t) (ref prev ?u_1) ) 
+            ) 
+            (dll x y ?u_1 z (+ n 199) ) 
+        ) ) 
+    )  )
+ )
+(check-sat)

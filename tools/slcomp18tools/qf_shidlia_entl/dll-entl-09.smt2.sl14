@@ -1,0 +1,61 @@
+(set-logic QF_S)
+(set-info :source |
+  Zhilin Wu.
+  COMPSPEN benchmark.
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2018-06-21")
+(declare-sort RefDll_t 0)
+;; Declare cell type Dll_t
+(declare-fun next () (Field RefDll_t RefDll_t) )
+(declare-fun prev () (Field RefDll_t RefDll_t) )
+
+;; IGNORE declare-heap 
+(define-fun ldll ((?E RefDll_t) (?P RefDll_t) (?len1 Int) (?F RefDll_t) (?L RefDll_t) (?len2 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?E ?F  )
+                (= ?P ?L  )
+                (= ?len1 ?len2  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefDll_t) (?len3 Int) ) 
+                (and 
+                    (= ?len1 (+ ?len3 1)   )
+                    (tobool (ssep 
+                        (pto ?E
+                            (sref (ref next ?u) (ref prev ?P) ) 
+                        ) 
+                        (ldll ?u ?E ?len3 ?F ?L ?len2) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun E1 () RefDll_t)
+(declare-fun E2 () RefDll_t)
+(declare-fun E1_p () RefDll_t)
+(declare-fun E2_p () RefDll_t)
+(declare-fun x1 () Int)
+(declare-fun x2 () Int)
+
+(assert (and 
+        (= x1 (+ x2 1)   )
+        (= E1 E2_p  )
+        (tobool (pto E1
+            (sref (ref next E2) (ref prev E1_p) ) 
+        ) ) 
+    )
+ )
+
+(assert (not (and 
+        (= x1 (+ x2 1)   )
+        (tobool (ldll E1 E1_p x1 E2 E2_p x2) )
+    ) )
+ )
+(check-sat)

@@ -1,0 +1,51 @@
+(set-logic QF_S)
+(set-info :source |
+Quang Loc Le Q.Le@tees.ac.uk
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2018-06-21")
+(declare-sort RefSll_t 0)
+;; Declare cell type Sll_t
+(declare-fun next () (Field RefSll_t RefSll_t) )
+
+;; IGNORE declare-heap 
+(define-fun ls ((?in RefSll_t) (?out RefSll_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?in ?out  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefSll_t) ) 
+                (and 
+                    (distinct ?in ?out  )
+                    (tobool (ssep 
+                        (pto ?in
+                            (ref next ?u) 
+                        ) 
+                        (ls ?u ?out) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x_emp () RefSll_t)
+(declare-fun y_emp () RefSll_t)
+(declare-fun z_emp () RefSll_t)
+
+(assert (and 
+        (= z_emp nil   )
+        (tobool (ssep 
+            (ls x_emp y_emp) 
+            (ls y_emp z_emp) 
+        ) ) 
+    )
+ )
+
+(assert (not (tobool (ls x_emp z_emp) ) )
+ )
+(check-sat)

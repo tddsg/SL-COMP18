@@ -1,0 +1,47 @@
+(set-logic QF_S)
+(set-info :source |
+  Quang Loc Le.
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-22")
+(declare-sort RefTree_t 0)
+;; Declare cell type Tree_t
+(declare-fun left () (Field RefTree_t RefTree_t) )
+(declare-fun right () (Field RefTree_t RefTree_t) )
+
+;; IGNORE declare-heap 
+(define-fun btree ((?x RefTree_t) (?len1 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?x nil   )
+                (= ?len1 0  )
+                (tobool emp ) 
+            )
+            (exists ((?l RefTree_t) (?r RefTree_t) (?n1 Int) (?n2 Int) ) 
+                (and 
+                    (= ?len1 (+ (+ ?n1 ?n2)  1)   )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref left ?l) (ref right ?r) ) 
+                        ) 
+                        (btree ?l ?n1) 
+                        (btree ?r ?n2) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x () RefTree_t)
+(declare-fun n1 () Int)
+
+(assert (and 
+        (> n1 320001) 
+        (tobool (btree x n1) )
+    )
+ )
+(check-sat)

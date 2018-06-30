@@ -1,0 +1,12 @@
+
+data RefSll_t {
+    RefSll_t next;
+};
+
+pred els(in,len1) := 
+    (emp & in=nil & len1=0)
+    \/ (exists u1,u2,len3. in->RefSll_t{next:u1} * u1->RefSll_t{next:u2} * els(u2,len3) & len1=len3+2);
+
+
+checkentail els(u_emp,n1) & n1=320001
+    |- false;

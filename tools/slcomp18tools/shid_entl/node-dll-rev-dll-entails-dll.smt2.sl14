@@ -1,0 +1,73 @@
+(set-logic QF_S)
+(set-info :source | 
+  R. Iosif, A. Rogalewicz and T. Vojnar. 
+  Deciding Entailments in Inductive Separation Logic with Tree Automata arXiv:1402.2127. 
+  http://www.fit.vutbr.cz/research/groups/verifit/tools/slide/ 
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(declare-sort RefDLL_t 0)
+;; Declare cell type DLL_t
+(declare-fun prev () (Field RefDLL_t RefDLL_t) )
+(declare-fun next () (Field RefDLL_t RefDLL_t) )
+
+;; IGNORE declare-heap 
+(define-fun DLL_plus ((?hd RefDLL_t) (?p RefDLL_t) (?tl RefDLL_t) (?n RefDLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?tl  )
+                (tobool (pto ?hd
+                    (sref (ref prev ?p) (ref next ?n) ) 
+                ) ) 
+            )
+            (exists ((?x RefDLL_t) ) 
+                (tobool (ssep 
+                    (pto ?hd
+                        (sref (ref prev ?p) (ref next ?x) ) 
+                    ) 
+                    (DLL_plus ?x ?hd ?tl ?n) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun DLL_plus_rev ((?hd RefDLL_t) (?p RefDLL_t) (?tl RefDLL_t) (?n RefDLL_t) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?hd ?tl  )
+                (tobool (pto ?hd
+                    (sref (ref prev ?p) (ref next ?n) ) 
+                ) ) 
+            )
+            (exists ((?x RefDLL_t) ) 
+                (tobool (ssep 
+                    (pto ?tl
+                        (sref (ref prev ?x) (ref next ?n) ) 
+                    ) 
+                    (DLL_plus_rev ?hd ?p ?x ?tl) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun a () RefDLL_t)
+(declare-fun c () RefDLL_t)
+
+(assert (exists ((?x RefDLL_t) (?b RefDLL_t) (?n RefDLL_t) ) 
+        (tobool (ssep 
+            (pto ?x
+                (sref (ref prev ?b) (ref next ?n) ) 
+            ) 
+            (DLL_plus_rev a nil  ?b ?x) 
+            (DLL_plus ?n ?x c nil ) 
+        ) ) 
+    ) 
+ )
+
+(assert (not (tobool (DLL_plus a nil  c nil ) ) )
+ )
+(check-sat)

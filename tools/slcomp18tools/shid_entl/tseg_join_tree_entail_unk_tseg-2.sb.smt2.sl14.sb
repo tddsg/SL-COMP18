@@ -1,0 +1,18 @@
+
+data Refnode {
+    Refnode left;
+    Refnode right;
+};
+
+pred tree(x_3) := 
+    (emp & nil=x_3)
+    \/ (exists l_4,r_5. x_3->Refnode{left:l_4,right:r_5} * tree(l_4) * tree(r_5));
+
+pred tseg(x_6,y_7) := 
+    (emp & x_6=y_7)
+    \/ (exists l_8,r_9. x_6->Refnode{left:l_8,right:r_9} * tree(l_8) * tseg(r_9,y_7))
+    \/ (exists l_10,r_11. x_6->Refnode{left:l_10,right:r_11} * tree(r_11) * tseg(l_10,y_7));
+
+
+checkentail tree(y) * tseg(x,y)
+    |- tseg(u,v);

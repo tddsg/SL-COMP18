@@ -1,0 +1,13 @@
+
+data RefDll_t {
+    RefDll_t next;
+    RefDll_t prev;
+};
+
+pred dll(fr,bk,pr,nx) := 
+    (emp & fr=nx & bk=pr)
+    \/ (exists u. fr->RefDll_t{next:u,prev:pr} * dll(u,bk,fr,nx) & fr!=nx & bk!=pr);
+
+
+checkentail x_emp->RefDll_t{next:w_emp,prev:nil} * w_emp->RefDll_t{next:y_emp,prev:x_emp} * y_emp->RefDll_t{next:z_emp,prev:w_emp} & x_emp!=z_emp & w_emp!=z_emp & y_emp!=z_emp
+    |- dll(x_emp,y_emp,nil,z_emp);

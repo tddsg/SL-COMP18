@@ -1,0 +1,12 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ls(x_1,y_2) := 
+    (emp & x_1=y_2)
+    \/ (exists u_3. x_1->Refnode{next:u_3} * ls(u_3,y_2));
+
+
+checkentail ls(x,y)
+    |- ls(t,y) * ls(x,t);

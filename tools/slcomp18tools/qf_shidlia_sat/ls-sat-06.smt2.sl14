@@ -1,0 +1,66 @@
+(set-logic QF_S)
+(set-info :source |
+  Zhilin Wu.
+  COMPSPEN benchmark.
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-21")
+(declare-sort RefSll_t 0)
+;; Declare cell type Sll_t
+(declare-fun next () (Field RefSll_t RefSll_t) )
+(declare-fun data () (Field RefSll_t Int) )
+
+;; IGNORE declare-heap 
+(define-fun lsls ((?in RefSll_t) (?dt1 Int) (?len1 Int) (?out RefSll_t) (?dt2 Int) (?len2 Int) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?in ?out  )
+                (= ?dt1 ?dt2  )
+                (= ?len1 ?len2  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefSll_t) (?dt3 Int) (?len3 Int) ) 
+                (and 
+                    (< ?dt1 (+ ?dt3 0) ) 
+                    (= ?len1 (+ ?len3 1)   )
+                    (tobool (ssep 
+                        (pto ?in
+                            (sref (ref next ?u) (ref data ?dt1) ) 
+                        ) 
+                        (lsls ?u ?dt3 ?len3 ?out ?dt2 ?len2) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun y_emp () RefSll_t)
+(declare-fun w_emp () RefSll_t)
+(declare-fun z_emp () RefSll_t)
+(declare-fun u_emp () RefSll_t)
+(declare-fun d1 () Int)
+(declare-fun d2 () Int)
+(declare-fun d3 () Int)
+(declare-fun d4 () Int)
+(declare-fun n1 () Int)
+(declare-fun n2 () Int)
+(declare-fun n3 () Int)
+(declare-fun n4 () Int)
+
+(assert (and 
+        (distinct d1 d2  )
+        (= n3 (+ n4 3)   )
+        (tobool (ssep 
+            (lsls u_emp d1 n1 z_emp d2 n2) 
+            (pto z_emp
+                (sref (ref next y_emp) (ref data d2) ) 
+            ) 
+            (lsls y_emp d3 n3 w_emp d4 n4) 
+        ) ) 
+    )
+ )
+(check-sat)

@@ -1,0 +1,12 @@
+
+data RefSll_t {
+    RefSll_t next;
+};
+
+pred ls(in,out) := 
+    (emp & in=out)
+    \/ (exists u. in->RefSll_t{next:u} * ls(u,out) & in!=out);
+
+
+checkentail ls(x_emp,y_emp) * ls(y_emp,z_emp) * z_emp->RefSll_t{next:t_emp}
+    |- ls(x_emp,z_emp) * z_emp->RefSll_t{next:t_emp};

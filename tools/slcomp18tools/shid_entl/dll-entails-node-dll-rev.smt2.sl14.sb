@@ -1,0 +1,17 @@
+
+data RefDLL_t {
+    RefDLL_t prev;
+    RefDLL_t next;
+};
+
+pred DLL_plus(hd,p,tl,n) := 
+    (hd->RefDLL_t{prev:p,next:n} & hd=tl)
+    \/ (exists x. hd->RefDLL_t{prev:p,next:x} * DLL_plus(x,hd,tl,n));
+
+pred DLL_plus_rev(hd,p,tl,n) := 
+    (hd->RefDLL_t{prev:p,next:n} & hd=tl)
+    \/ (exists x. tl->RefDLL_t{prev:x,next:n} * DLL_plus_rev(hd,p,x,tl));
+
+
+checkentail DLL_plus(a,nil,c,nil)
+    |- x->RefDLL_t{prev:b,next:n} * DLL_plus_rev(a,nil,b,x) * DLL_plus(n,x,c,nil);
