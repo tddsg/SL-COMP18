@@ -1,0 +1,14 @@
+
+data RefDltree_t {
+    RefDltree_t lson;
+    RefDltree_t rson;
+    RefDltree_t parent;
+};
+
+pred dltree(r,p) := 
+    (r->RefDltree_t{lson:nil,rson:nil,parent:p})
+    \/ (exists ls,rs. r->RefDltree_t{lson:ls,rson:rs,parent:p} * dltree(ls,r) * dltree(rs,r) & ls!=rs & r!=ls & r!=rs);
+
+
+checkentail dltree(x0,nil)
+    |- false;

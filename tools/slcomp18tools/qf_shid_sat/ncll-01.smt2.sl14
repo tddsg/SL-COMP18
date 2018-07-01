@@ -1,0 +1,60 @@
+(set-logic QF_S)
+(set-info :source |
+Jens Katelaan, Harrsh, https://github.com/katelaan/harrsh/
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-18")
+(declare-sort RefNLL_lvl1_t 0)
+(declare-sort RefNLL_lvl2_t 0)
+;; Declare cell type NLL_lvl1_t
+(declare-fun next1 () (Field RefNLL_lvl1_t RefNLL_lvl1_t) )
+
+;; Declare cell type NLL_lvl2_t
+(declare-fun next2 () (Field RefNLL_lvl2_t RefNLL_lvl2_t) )
+(declare-fun down () (Field RefNLL_lvl2_t RefNLL_lvl1_t) )
+
+;; IGNORE declare-heap 
+(define-fun nell ((?in RefNLL_lvl1_t) (?out RefNLL_lvl1_t) ) 
+        Space 
+    (tospace (or 
+            (tobool (pto ?in
+                (ref next1 ?out) 
+            ) ) 
+            (exists ((?u RefNLL_lvl1_t) ) 
+                (tobool (ssep 
+                    (pto ?in
+                        (ref next1 ?u) 
+                    ) 
+                    (nell ?u ?out) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun ncll ((?in RefNLL_lvl2_t) (?out RefNLL_lvl2_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?in ?out  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefNLL_lvl2_t) (?h RefNLL_lvl1_t) ) 
+                (tobool (ssep 
+                    (pto ?in
+                        (sref (ref next2 ?u) (ref down ?h) ) 
+                    ) 
+                    (nell ?h ?h) 
+                    (ncll ?u ?out) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefNLL_lvl2_t)
+
+(assert (tobool (ncll x0 nil ) )
+ )
+(check-sat)

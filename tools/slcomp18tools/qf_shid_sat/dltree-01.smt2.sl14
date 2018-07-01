@@ -1,0 +1,44 @@
+(set-logic QF_S)
+(set-info :source |
+Jens Katelaan, Harrsh, https://github.com/katelaan/harrsh/
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-18")
+(declare-sort RefDltree_t 0)
+;; Declare cell type Dltree_t
+(declare-fun lson () (Field RefDltree_t RefDltree_t) )
+(declare-fun rson () (Field RefDltree_t RefDltree_t) )
+(declare-fun parent () (Field RefDltree_t RefDltree_t) )
+
+;; IGNORE declare-heap 
+(define-fun dltree ((?r RefDltree_t) (?p RefDltree_t) ) 
+        Space 
+    (tospace (or 
+            (tobool (pto ?r
+                (sref (ref lson nil ) (ref rson nil ) (ref parent ?p) ) 
+            ) ) 
+            (exists ((?ls RefDltree_t) (?rs RefDltree_t) ) 
+                (and 
+                    (distinct ?ls ?rs  )
+                    (distinct ?r ?ls  )
+                    (distinct ?r ?rs  )
+                    (tobool (ssep 
+                        (pto ?r
+                            (sref (ref lson ?ls) (ref rson ?rs) (ref parent ?p) ) 
+                        ) 
+                        (dltree ?ls ?r) 
+                        (dltree ?rs ?r) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefDltree_t)
+
+(assert (tobool (dltree x0 nil ) )
+ )
+(check-sat)

@@ -1,0 +1,36 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred one(x) := (emp & nil!=x);
+
+pred zero(x) := (emp & nil=x);
+
+pred succ16circuit(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15,y16) := (exists z3,z4,z5,z6,z7,z8,z9,z10,z11,z12,z13,z14,z15,z16. notg(x1,y1) * xorg(x1,x2,y2) * andg(x1,x2,z3) * xorg(z3,x3,y3) * andg(z3,x3,z4) * xorg(x4,y4,z4) * andg(z4,x4,z5) * xorg(x5,y5,z5) * andg(z5,x5,z6) * xorg(x6,y6,z6) * andg(z6,x6,z7) * xorg(x7,y7,z7) * andg(z7,x7,z8) * xorg(x8,y8,z8) * andg(z8,x8,z9) * xorg(x9,y9,z9) * andg(z9,x9,z10) * xorg(x10,y10,z10) * andg(z10,x10,z11) * xorg(x11,y11,z11) * andg(z11,x11,z12) * xorg(x12,y12,z12) * andg(z12,x12,z13) * xorg(x13,y13,z13) * andg(z13,x13,z14) * xorg(x14,y14,z14) * andg(z14,x14,z15) * xorg(x15,y15,z15) * andg(z15,x15,z16) * xorg(x16,y16,z16));
+
+pred Q(y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15,y16) := 
+    (zero(y1) * zero(y2) * zero(y3) * zero(y4) * zero(y5) * zero(y6) * zero(y7) * zero(y8) * zero(y9) * zero(y10) * zero(y11) * zero(y12) * zero(y13) * zero(y14) * zero(y15) * zero(y16))
+    \/ (exists x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16. succ16circuit(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,y1,y2,y3,y4,y5,y6,y7,y8,y9,y10,y11,y12,y13,y14,y15,y16) * Q(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16));
+
+pred P(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16) := (one(x1) * one(x2) * one(x3) * one(x4) * one(x5) * one(x6) * one(x7) * one(x8) * one(x9) * one(x10) * one(x11) * one(x12) * one(x13) * one(x14) * one(x15) * one(x16) * Q(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16));
+
+pred notg(x,y) := 
+    (zero(x) * one(y))
+    \/ (one(x) * zero(y));
+
+pred xorg(x,y,z) := 
+    (zero(x) * zero(y) * zero(z))
+    \/ (zero(x) * one(y) * one(z))
+    \/ (one(x) * zero(y) * one(z))
+    \/ (one(x) * one(y) * zero(z));
+
+pred andg(x,y,z) := 
+    (zero(x) * zero(z))
+    \/ (zero(y) * zero(z))
+    \/ (one(x) * one(y) * one(z));
+
+
+checkentail P(x0,x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15)
+    |- false;

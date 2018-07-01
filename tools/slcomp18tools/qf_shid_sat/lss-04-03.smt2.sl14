@@ -1,0 +1,151 @@
+(set-logic QF_S)
+(set-info :source |
+  Quang Loc Le Q.Le@tees.ac.uk
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2018-06-15")
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+(declare-fun f1 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun P ((?x RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?x  )
+                (tobool emp ) 
+            )
+            (and 
+                (distinct nil  ?x  )
+                (tobool (Q ?x ?x) )
+            )
+        ) 
+    )
+)
+(define-fun R ((?x RefGTyp) ) 
+ Space 
+    (tospace (and 
+            (distinct nil  ?x  )
+            (tobool (P ?x) )
+        )
+    )
+)
+(define-fun Q ((?x RefGTyp) (?y RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (exists ((?d RefGTyp) (?c RefGTyp) ) 
+                (and 
+                    (= nil  ?y  )
+                    (distinct nil  ?x  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?d) (ref f1 ?c) ) 
+                        ) 
+                        (P ?d) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?d RefGTyp) (?c RefGTyp) ) 
+                (and 
+                    (distinct nil  ?y  )
+                    (tobool (ssep 
+                        (pto ?y
+                            (sref (ref f0 ?d) (ref f1 ?c) ) 
+                        ) 
+                        (Q ?x ?c) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?d RefGTyp) ) 
+                (and 
+                    (distinct nil  ?x  )
+                    (tobool (S1 ?x ?y ?d) )
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun S1 ((?x RefGTyp) (?y RefGTyp) (?z RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (exists ((?c RefGTyp) ) 
+                (and 
+                    (= nil  nil   )
+                    (tobool (ssep 
+                        (pto ?y
+                            (sref (ref f0 ?x) (ref f1 ?c) ) 
+                        ) 
+                        (pto ?z
+                            (sref (ref f0 ?c) (ref f1 ?c) ) 
+                        ) 
+                        (P ?z) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?c RefGTyp) (?d RefGTyp) ) 
+                (and 
+                    (= nil  ?c  )
+                    (= nil  ?d  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?c) (ref f1 ?d) ) 
+                        ) 
+                        (Q ?x ?y) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?c RefGTyp) (?d RefGTyp) ) 
+                (and 
+                    (distinct nil  ?c  )
+                    (tobool (S2 ?c ?y ?z ?c) )
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun S2 ((?x RefGTyp) (?y RefGTyp) (?z RefGTyp) (?t RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (exists ((?c RefGTyp) ) 
+                (and 
+                    (= nil  nil   )
+                    (tobool (ssep 
+                        (pto ?y
+                            (sref (ref f0 ?x) (ref f1 ?c) ) 
+                        ) 
+                        (pto ?z
+                            (sref (ref f0 ?c) (ref f1 ?x) ) 
+                        ) 
+                        (P ?t) 
+                    ) ) 
+                )
+            ) 
+            (exists ((?c RefGTyp) (?d RefGTyp) ) 
+                (and 
+                    (= nil  ?c  )
+                    (= nil  ?d  )
+                    (tobool (ssep 
+                        (pto ?x
+                            (sref (ref f0 ?c) (ref f1 ?d) ) 
+                        ) 
+                        (Q ?x ?y) 
+                    ) ) 
+                )
+            ) 
+            (and 
+                (= nil  ?y  )
+                (tobool (S1 ?x ?y ?z) )
+            )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefGTyp)
+
+(assert (tobool (R x0) )
+ )
+(check-sat)

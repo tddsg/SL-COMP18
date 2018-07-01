@@ -1,0 +1,15 @@
+
+data RefSll2h_t {
+    RefSll2h_t next;
+    RefSll2h_t head;
+};
+
+pred sllpf(in,out,head) := 
+    (emp & in=out)
+    \/ (exists u. in->RefSll2h_t{next:u,head:head} * sllpf(u,out,head));
+
+pred sllh(in,out) := (sllpf(in,out,in));
+
+
+checkentail sllh(x0,nil)
+    |- false;

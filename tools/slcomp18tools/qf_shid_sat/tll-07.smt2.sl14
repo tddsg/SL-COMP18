@@ -1,0 +1,62 @@
+(set-logic QF_S)
+(set-info :source |
+Jens Katelaan, Harrsh, https://github.com/katelaan/harrsh/
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-21")
+(declare-sort RefTll_t 0)
+;; Declare cell type Tll_t
+(declare-fun lson () (Field RefTll_t RefTll_t) )
+(declare-fun rson () (Field RefTll_t RefTll_t) )
+(declare-fun next () (Field RefTll_t RefTll_t) )
+
+;; IGNORE declare-heap 
+(define-fun tll ((?r RefTll_t) (?ll RefTll_t) (?rl RefTll_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?r ?ll  )
+                (tobool (pto ?r
+                    (sref (ref lson nil ) (ref rson nil ) (ref next ?rl) ) 
+                ) ) 
+            )
+            (exists ((?ls RefTll_t) (?rs RefTll_t) (?z RefTll_t) ) 
+                (tobool (ssep 
+                    (pto ?r
+                        (sref (ref lson ?ls) (ref rson ?rs) (ref next nil ) ) 
+                    ) 
+                    (tll ?ls ?ll ?z) 
+                    (tll ?rs ?z ?rl) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefTll_t)
+(declare-fun x1 () RefTll_t)
+(declare-fun x2 () RefTll_t)
+(declare-fun x3 () RefTll_t)
+(declare-fun x4 () RefTll_t)
+(declare-fun x5 () RefTll_t)
+(declare-fun x6 () RefTll_t)
+(declare-fun x7 () RefTll_t)
+(declare-fun x8 () RefTll_t)
+
+(assert (and 
+        (tobool (ssep 
+            (tll x0 x1 x2) 
+            (tll x2 x3 x4) 
+            (tll x4 x5 x6) 
+            (tll x6 x7 x8) 
+        ) ) 
+        (= x0 x1  )
+        (distinct x2 x3  )
+        (= x4 x5  )
+        (distinct x6 x7  )
+        (= x8 x0  )
+    )
+ )
+(check-sat)

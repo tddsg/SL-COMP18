@@ -1,0 +1,19 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred Q(x,y) := 
+    (exists d,c. x->RefGTyp{f0:d,f1:c} * P(d) & nil=y & nil!=x)
+    \/ (exists d,c. y->RefGTyp{f0:d,f1:c} * Q(x,c) & nil!=y);
+
+pred P(x) := 
+    (emp & nil=x)
+    \/ (Q(x,x) & nil!=x);
+
+pred R(x) := (P(x) & nil!=x);
+
+
+checkentail R(x0)
+    |- false;

@@ -1,0 +1,14 @@
+
+data RefTll_t {
+    RefTll_t lson;
+    RefTll_t rson;
+    RefTll_t next;
+};
+
+pred tll(r,ll,rl) := 
+    (r->RefTll_t{lson:nil,rson:nil,next:rl} & r=ll)
+    \/ (exists ls,rs,z. r->RefTll_t{lson:ls,rson:rs,next:nil} * tll(ls,ll,z) * tll(rs,z,rl));
+
+
+checkentail tll(x0,x0,x0) * tll(x1,x1,x1) * tll(x2,x2,x2) * tll(x3,x3,x3)
+    |- false;

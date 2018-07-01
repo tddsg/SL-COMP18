@@ -1,0 +1,347 @@
+(set-logic QF_S)
+(set-info :source |
+  James Brotherston, Carsten Fuhs, Nikos Gorogiannis, and Juan Navarro Pérez. 
+  A decision procedure for satisfiability in separation logic with inductive 
+  predicates. CSL-LICS, 2014. 
+  https://github.com/ngorogiannis/cyclist/releases/tag/CSL-LICS14
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status sat)
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+(declare-fun f1 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun I001 ((?a RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?a  )
+                (tobool (ssep 
+                    (pto ?a
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I003 ?a ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun ls ((?a RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?a  )
+                (tobool emp ) 
+            )
+            (and 
+                (distinct nil  ?a  )
+                (tobool (I001 ?a) )
+            )
+        ) 
+    )
+)
+(define-fun I2783 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?g  )
+                (tobool (I2835 ?a ?b ?c ?d ?e ?f ?g) )
+            )
+            (and 
+                (distinct nil  ?g  )
+                (tobool (I2834 ?a ?b ?c ?d ?e ?f ?g) )
+            )
+        ) 
+    )
+)
+(define-fun I79311 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) (?h RefGTyp) ) 
+ Space 
+    (tospace (tobool (I2783 ?a ?b ?c ?d ?e ?f ?h) )
+    )
+)
+(define-fun I2834 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?g  )
+                (tobool (ssep 
+                    (pto ?g
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I79311 ?a ?b ?c ?d ?e ?f ?g ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I2835 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?b ?g  )
+                (tobool emp ) 
+            )
+            (and 
+                (distinct ?b ?g  )
+                (tobool (I15080 ?a ?b ?c ?d ?e ?f ?g) )
+            )
+        ) 
+    )
+)
+(define-fun I50053 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) (?h RefGTyp) ) 
+ Space 
+    (tospace (tobool (I2835 ?a ?h ?c ?d ?e ?f ?g) )
+    )
+)
+(define-fun I15080 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?b  )
+                (tobool (ssep 
+                    (pto ?b
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I50053 ?a ?b ?c ?d ?e ?f ?g ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I2696 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?f  )
+                (tobool (ssep 
+                    (pto ?f
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I2783 ?a ?b ?c ?d ?e ?f ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I2697 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?a ?f  )
+                (tobool emp ) 
+            )
+            (and 
+                (distinct ?a ?f  )
+                (tobool (I2740 ?a ?b ?c ?d ?e ?f) )
+            )
+        ) 
+    )
+)
+(define-fun I2749 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) (?g RefGTyp) ) 
+ Space 
+    (tospace (tobool (I2697 ?g ?b ?c ?d ?e ?f) )
+    )
+)
+(define-fun I2740 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?a  )
+                (tobool (ssep 
+                    (pto ?a
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I2749 ?a ?b ?c ?d ?e ?f ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I2676 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?f  )
+                (tobool (I2697 ?a ?b ?c ?d ?e ?f) )
+            )
+            (and 
+                (distinct nil  ?f  )
+                (tobool (I2696 ?a ?b ?c ?d ?e ?f) )
+            )
+        ) 
+    )
+)
+(define-fun I482 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?e  )
+                (tobool (ssep 
+                    (pto ?e
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I2676 ?a ?b ?c ?d ?e ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I483 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= ?b ?e  )
+                (tobool emp ) 
+            )
+            (and 
+                (distinct ?b ?e  )
+                (tobool (I510 ?a ?b ?c ?d ?e) )
+            )
+        ) 
+    )
+)
+(define-fun I1956 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) (?f RefGTyp) ) 
+ Space 
+    (tospace (tobool (I483 ?a ?f ?c ?d ?e) )
+    )
+)
+(define-fun I510 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?b  )
+                (tobool (ssep 
+                    (pto ?b
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I1956 ?a ?b ?c ?d ?e ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I466 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) (?e RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?e  )
+                (tobool (I483 ?a ?b ?c ?d ?e) )
+            )
+            (and 
+                (distinct nil  ?e  )
+                (tobool (I482 ?a ?b ?c ?d ?e) )
+            )
+        ) 
+    )
+)
+(define-fun I046 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?d  )
+                (tobool (ssep 
+                    (pto ?d
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I466 ?a ?b ?c ?d ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I008 ((?a RefGTyp) (?b RefGTyp) ) 
+ Space 
+    (tospace (tobool emp ) 
+    )
+)
+(define-fun I047 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) ) 
+ Space 
+    (tospace (tobool (I008 ?c ?d) )
+    )
+)
+(define-fun I034 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) (?d RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?d  )
+                (tobool (I047 ?a ?b ?c ?d) )
+            )
+            (and 
+                (distinct nil  ?d  )
+                (tobool (I046 ?a ?b ?c ?d) )
+            )
+        ) 
+    )
+)
+(define-fun I021 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?c  )
+                (tobool (ssep 
+                    (pto ?c
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I034 ?a ?b ?c ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I022 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) ) 
+ Space 
+    (tospace (tobool (I008 ?b ?c) )
+    )
+)
+(define-fun I013 ((?a RefGTyp) (?b RefGTyp) (?c RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?c  )
+                (tobool (I022 ?a ?b ?c) )
+            )
+            (and 
+                (distinct nil  ?c  )
+                (tobool (I021 ?a ?b ?c) )
+            )
+        ) 
+    )
+)
+(define-fun I007 ((?a RefGTyp) (?b RefGTyp) ) 
+ Space 
+    (tospace (exists ((?a00 RefGTyp) ) 
+            (and 
+                (distinct nil  ?b  )
+                (tobool (ssep 
+                    (pto ?b
+                        (sref (ref f0 ?a00) (ref f1 nil ) ) 
+                    ) 
+                    (I013 ?a ?b ?a00) 
+                ) ) 
+            )
+        ) 
+    )
+)
+(define-fun I003 ((?a RefGTyp) (?b RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (and 
+                (= nil  ?b  )
+                (tobool (I008 ?a ?b) )
+            )
+            (and 
+                (distinct nil  ?b  )
+                (tobool (I007 ?a ?b) )
+            )
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefGTyp)
+
+(assert (tobool (ls x0) )
+ )
+(check-sat)

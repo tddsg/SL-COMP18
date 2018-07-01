@@ -1,0 +1,14 @@
+
+data RefBtree_t {
+    RefBtree_t lson;
+    RefBtree_t rson;
+};
+
+pred tree(r) := 
+    (emp & r=nil)
+    \/ (r->RefBtree_t{lson:nil,rson:nil})
+    \/ (exists ls,rs. r->RefBtree_t{lson:ls,rson:rs} * tree(ls) * tree(rs));
+
+
+checkentail tree(x0)
+    |- false;

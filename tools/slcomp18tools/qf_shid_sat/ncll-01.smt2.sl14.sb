@@ -1,0 +1,21 @@
+
+data RefNLL_lvl1_t {
+    RefNLL_lvl1_t next1;
+};
+
+data RefNLL_lvl2_t {
+    RefNLL_lvl2_t next2;
+    RefNLL_lvl1_t down;
+};
+
+pred nell(in,out) := 
+    (in->RefNLL_lvl1_t{next1:out})
+    \/ (exists u. in->RefNLL_lvl1_t{next1:u} * nell(u,out));
+
+pred ncll(in,out) := 
+    (emp & in=out)
+    \/ (exists u,h. in->RefNLL_lvl2_t{next2:u,down:h} * nell(h,h) * ncll(u,out));
+
+
+checkentail ncll(x0,nil)
+    |- false;

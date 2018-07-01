@@ -1,0 +1,57 @@
+(set-logic QF_S)
+(set-info :source |
+Jens Katelaan, Harrsh, https://github.com/katelaan/harrsh/
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status unsat)
+(set-info :version "2018-06-18")
+(declare-sort RefDll_t 0)
+;; Declare cell type Dll_t
+(declare-fun next () (Field RefDll_t RefDll_t) )
+(declare-fun prev () (Field RefDll_t RefDll_t) )
+
+;; IGNORE declare-heap 
+(define-fun dll ((?fr RefDll_t) (?pr RefDll_t) (?nx RefDll_t) (?bk RefDll_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?fr ?nx  )
+                (= ?bk ?pr  )
+                (tobool emp ) 
+            )
+            (exists ((?u RefDll_t) ) 
+                (and 
+                    (distinct ?fr ?nx  )
+                    (distinct ?bk ?pr  )
+                    (tobool (ssep 
+                        (pto ?fr
+                            (sref (ref next ?u) (ref prev ?pr) ) 
+                        ) 
+                        (dll ?u ?fr ?nx ?bk) 
+                    ) ) 
+                )
+            ) 
+        ) 
+    )
+)
+(define-fun R ((?x RefDll_t) (?y RefDll_t) ) 
+        Space 
+    (tospace (and 
+            (distinct ?x ?y  )
+            (tobool (ssep 
+                (dll ?x nil  nil  ?y) 
+                (pto ?y
+                    (sref (ref next nil ) (ref prev nil ) ) 
+                ) 
+            ) ) 
+        )
+    )
+)
+(check-sat)
+(declare-fun x0 () RefDll_t)
+(declare-fun y0 () RefDll_t)
+
+(assert (tobool (R x0 y0) )
+ )
+(check-sat)

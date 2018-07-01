@@ -1,0 +1,164 @@
+(set-logic QF_S)
+(set-info :source |
+  James Brotherston, Carsten Fuhs, Nikos Gorogiannis, and Juan Navarro Pérez. 
+  A decision procedure for satisfiability in separation logic with inductive 
+  predicates. CSL-LICS, 2014. 
+  https://github.com/ngorogiannis/cyclist/releases/tag/CSL-LICS14
+|)
+(set-info :smt-lib-version 2)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2014-05-31")
+(declare-sort RefGTyp 0)
+;; Declare cell type GTyp
+(declare-fun f0 () (Field RefGTyp RefGTyp) )
+(declare-fun f1 () (Field RefGTyp RefGTyp) )
+
+;; IGNORE declare-heap 
+(define-fun one ((?x RefGTyp) ) 
+ Space 
+    (tospace (and 
+            (distinct nil  ?x  )
+            (tobool emp ) 
+        )
+    )
+)
+(define-fun Q ((?y1 RefGTyp) (?y2 RefGTyp) (?y3 RefGTyp) (?y4 RefGTyp) (?y5 RefGTyp) (?y6 RefGTyp) (?y7 RefGTyp) (?y8 RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (tobool (ssep 
+                (zero ?y1) 
+                (zero ?y2) 
+                (zero ?y3) 
+                (zero ?y4) 
+                (zero ?y5) 
+                (zero ?y6) 
+                (zero ?y7) 
+                (zero ?y8) 
+            ) ) 
+            (exists ((?x1 RefGTyp) (?x2 RefGTyp) (?x3 RefGTyp) (?x4 RefGTyp) (?x5 RefGTyp) (?x6 RefGTyp) (?x7 RefGTyp) (?x8 RefGTyp) ) 
+                (tobool (ssep 
+                    (succ8circuit ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8 ?y1 ?y2 ?y3 ?y4 ?y5 ?y6 ?y7 ?y8) 
+                    (Q ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(define-fun P ((?x1 RefGTyp) (?x2 RefGTyp) (?x3 RefGTyp) (?x4 RefGTyp) (?x5 RefGTyp) (?x6 RefGTyp) (?x7 RefGTyp) (?x8 RefGTyp) ) 
+ Space 
+    (tospace (tobool (ssep 
+            (one ?x1) 
+            (one ?x2) 
+            (one ?x3) 
+            (one ?x4) 
+            (one ?x5) 
+            (one ?x6) 
+            (one ?x7) 
+            (one ?x8) 
+            (Q ?x1 ?x2 ?x3 ?x4 ?x5 ?x6 ?x7 ?x8) 
+        ) ) 
+    )
+)
+(define-fun zero ((?x RefGTyp) ) 
+ Space 
+    (tospace (and 
+            (= nil  ?x  )
+            (tobool emp ) 
+        )
+    )
+)
+(define-fun succ8circuit ((?x1 RefGTyp) (?x2 RefGTyp) (?x3 RefGTyp) (?x4 RefGTyp) (?x5 RefGTyp) (?x6 RefGTyp) (?x7 RefGTyp) (?x8 RefGTyp) (?y1 RefGTyp) (?y2 RefGTyp) (?y3 RefGTyp) (?y4 RefGTyp) (?y5 RefGTyp) (?y6 RefGTyp) (?y7 RefGTyp) (?y8 RefGTyp) ) 
+ Space 
+    (tospace (exists ((?z3 RefGTyp) (?z4 RefGTyp) (?z5 RefGTyp) (?z6 RefGTyp) (?z7 RefGTyp) (?z8 RefGTyp) ) 
+            (tobool (ssep 
+                (notg ?x1 ?y1) 
+                (xorg ?x1 ?x2 ?y2) 
+                (andg ?x1 ?x2 ?z3) 
+                (xorg ?z3 ?x3 ?y3) 
+                (andg ?z3 ?x3 ?z4) 
+                (xorg ?x4 ?y4 ?z4) 
+                (andg ?z4 ?x4 ?z5) 
+                (xorg ?x5 ?y5 ?z5) 
+                (andg ?z5 ?x5 ?z6) 
+                (xorg ?x6 ?y6 ?z6) 
+                (andg ?z6 ?x6 ?z7) 
+                (xorg ?x7 ?y7 ?z7) 
+                (andg ?z7 ?x7 ?z8) 
+                (xorg ?x8 ?y8 ?z8) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun notg ((?x RefGTyp) (?y RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (tobool (ssep 
+                (zero ?x) 
+                (one ?y) 
+            ) ) 
+            (tobool (ssep 
+                (one ?x) 
+                (zero ?y) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun xorg ((?x RefGTyp) (?y RefGTyp) (?z RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (tobool (ssep 
+                (zero ?x) 
+                (zero ?y) 
+                (zero ?z) 
+            ) ) 
+            (tobool (ssep 
+                (zero ?x) 
+                (one ?y) 
+                (one ?z) 
+            ) ) 
+            (tobool (ssep 
+                (one ?x) 
+                (zero ?y) 
+                (one ?z) 
+            ) ) 
+            (tobool (ssep 
+                (one ?x) 
+                (one ?y) 
+                (zero ?z) 
+            ) ) 
+        ) 
+    )
+)
+(define-fun andg ((?x RefGTyp) (?y RefGTyp) (?z RefGTyp) ) 
+ Space 
+    (tospace (or 
+            (tobool (ssep 
+                (zero ?x) 
+                (zero ?z) 
+            ) ) 
+            (tobool (ssep 
+                (zero ?y) 
+                (zero ?z) 
+            ) ) 
+            (tobool (ssep 
+                (one ?x) 
+                (one ?y) 
+                (one ?z) 
+            ) ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefGTyp)
+(declare-fun x1 () RefGTyp)
+(declare-fun x2 () RefGTyp)
+(declare-fun x3 () RefGTyp)
+(declare-fun x4 () RefGTyp)
+(declare-fun x5 () RefGTyp)
+(declare-fun x6 () RefGTyp)
+(declare-fun x7 () RefGTyp)
+
+(assert (tobool (P x0 x1 x2 x3 x4 x5 x6 x7) )
+ )
+(check-sat)

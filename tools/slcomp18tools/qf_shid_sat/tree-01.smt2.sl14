@@ -1,0 +1,42 @@
+(set-logic QF_S)
+(set-info :source |
+Jens Katelaan, Harrsh, https://github.com/katelaan/harrsh/
+|)
+(set-info :smt-lib-version 2.6)
+(set-info :category "crafted")
+(set-info :status sat)
+(set-info :version "2018-06-18")
+(declare-sort RefBtree_t 0)
+;; Declare cell type Btree_t
+(declare-fun lson () (Field RefBtree_t RefBtree_t) )
+(declare-fun rson () (Field RefBtree_t RefBtree_t) )
+
+;; IGNORE declare-heap 
+(define-fun tree ((?r RefBtree_t) ) 
+        Space 
+    (tospace (or 
+            (and 
+                (= ?r nil   )
+                (tobool emp ) 
+            )
+            (tobool (pto ?r
+                (sref (ref lson nil ) (ref rson nil ) ) 
+            ) ) 
+            (exists ((?ls RefBtree_t) (?rs RefBtree_t) ) 
+                (tobool (ssep 
+                    (pto ?r
+                        (sref (ref lson ?ls) (ref rson ?rs) ) 
+                    ) 
+                    (tree ?ls) 
+                    (tree ?rs) 
+                ) ) 
+            ) 
+        ) 
+    )
+)
+(check-sat)
+(declare-fun x0 () RefBtree_t)
+
+(assert (tobool (tree x0) )
+ )
+(check-sat)
