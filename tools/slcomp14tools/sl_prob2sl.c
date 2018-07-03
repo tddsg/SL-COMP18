@@ -134,7 +134,7 @@ sl_var_2sl (FILE* fout, sl_var_array * args, sl_var_array * lvars, uid_t vid,
 	    bool inpred, uid_t rctx)
 {
   char *vname;
-  
+
   char * rname = (rctx == SL_TYP_VOID) ? "" : sl_record_name(rctx);
   if (vid == VNIL_ID && 
       (inpred || !inpred)) // to silent compiler
@@ -147,7 +147,7 @@ sl_var_2sl (FILE* fout, sl_var_array * args, sl_var_array * lvars, uid_t vid,
   // printf("fstlocal = %d, vid = %d\n", fstlocal, vid);
   if (vid >= fstlocal)
     vname = sl_var_name (lvars, vid - fstlocal, rctx);
-  else 
+  else
     vname = sl_var_name (args, vid, rctx);
   if (vname[0] == '?')
     fprintf (fout, "%s", vname + 1); 
@@ -162,12 +162,6 @@ uid_t
 sl_vartype_2sl (sl_var_array * args, sl_var_array * lvars, uid_t vid,
                bool inpred)
 {
-  /*
-  if (inpred && vid == 1) {
-    return sl_var_record(args, vid);
-  } 
-  */
-
   if (vid == VNIL_ID)
     return (heap_rid == UNDEFINED_ID) ? SL_TYP_VOID : heap_rid; // TODO : type
   
@@ -257,15 +251,24 @@ sl_term_2sl (FILE * fout, sl_var_array * args,
       break;
     }
     case SL_DATA_PLUS: {
-      fprintf (fout, "(+ ");
-      sl_term_array_2sl (fout, args, lvars, t->args, inpred, SL_TYP_INT);
-      fprintf (fout, ") ");
+      if (t->args == NULL || sl_vector_size(t->args) == 0)
+        fprintf (fout, "0");
+      else {
+        fprintf (fout, "(+ ");
+        if (sl_vector_size(t->args) == 1) fprintf (fout, "0 ");
+        sl_term_array_2sl (fout, args, lvars, t->args, inpred, SL_TYP_INT);
+        fprintf (fout, ") ");
+      }
       break;
     }
     case SL_DATA_MINUS: {
-      fprintf (fout, "(- ");
-      sl_term_array_2sl (fout, args, lvars, t->args, inpred, SL_TYP_INT);
-      fprintf (fout, ") ");
+      if (t->args == NULL || sl_vector_size(t->args) == 0)
+        fprintf (fout, "0");
+      else {
+        fprintf (fout, "(- ");
+        sl_term_array_2sl (fout, args, lvars, t->args, inpred, SL_TYP_INT);
+        fprintf (fout, ") ");
+      }
       break;
     }
     default:
