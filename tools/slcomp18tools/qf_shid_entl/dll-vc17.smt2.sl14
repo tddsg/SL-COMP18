@@ -6,7 +6,7 @@ http://www.liafa.univ-paris-diderot.fr/spen
 |)
 (set-info :smt-lib-version 2)
 (set-info :category "crafted")
-(set-info :status sat)
+(set-info :status unsat)
 (set-info :version "2014-05-28")
 (declare-sort RefDll_t 0)
 ;; Declare cell type Dll_t
@@ -41,25 +41,22 @@ http://www.liafa.univ-paris-diderot.fr/spen
 (declare-fun x_emp () RefDll_t)
 (declare-fun w_emp () RefDll_t)
 (declare-fun y_emp () RefDll_t)
-(declare-fun z_emp () RefDll_t)
 (declare-fun u_emp () RefDll_t)
 
 (assert (and 
         (distinct x_emp w_emp  )
-        (distinct x_emp z_emp  )
-        (distinct y_emp z_emp  )
         (tobool (ssep 
             (pto x_emp
                 (sref (ref next w_emp) (ref prev nil ) ) 
             ) 
             (dll w_emp u_emp x_emp y_emp) 
             (pto y_emp
-                (sref (ref next z_emp) (ref prev u_emp) ) 
+                (sref (ref next nil ) (ref prev u_emp) ) 
             ) 
         ) ) 
     )
  )
 
-(assert (not (tobool (dll x_emp y_emp nil  z_emp) ) )
+(assert (not (tobool (dll x_emp y_emp nil  nil ) ) )
  )
 (check-sat)
