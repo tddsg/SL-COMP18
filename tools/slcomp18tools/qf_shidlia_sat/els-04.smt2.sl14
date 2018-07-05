@@ -42,7 +42,7 @@
 (declare-fun k () Int)
 
 (assert (and 
-        (= n1 (+ (* k 2)  1)   )
+        (= n1 (+ k k 1)   )
         (tobool (els u_emp n1) )
     )
  )

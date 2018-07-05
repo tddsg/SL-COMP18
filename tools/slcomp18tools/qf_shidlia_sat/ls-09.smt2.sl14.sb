@@ -8,5 +8,5 @@ pred ls(in,len1) :=
     \/ (exists u,len3. in->RefSll_t{next:u} * ls(u,len3) & len1=len3+1);
 
 
-checkentail ls(u_emp,n1) & error
+checkentail ls(u_emp,n1) & n1<0
     |- false;

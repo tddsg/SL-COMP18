@@ -9,5 +9,5 @@ pred ldll(E,P,len1,F,L,len2) :=
     \/ (exists u,len3. E->RefDll_t{next:u,prev:P} * ldll(u,E,len3,F,L,len2) & len1=len3+1);
 
 
-checkentail ldll(x1,x2,n1,y1,y2,n2) & error & x1=y2
+checkentail ldll(x1,x2,n1,y1,y2,n2) & n1>n2+1 & x1=y2
     |- false;

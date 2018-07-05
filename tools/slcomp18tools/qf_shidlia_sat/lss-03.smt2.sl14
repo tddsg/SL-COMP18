@@ -43,7 +43,7 @@
 (declare-fun k () Int)
 
 (assert (and 
-        (= n1 (* 2 k)   )
+        (= n1 (+ k k)   )
         (tobool (lss x y n1) )
     )
  )

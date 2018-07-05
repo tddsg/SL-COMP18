@@ -9,5 +9,5 @@ pred lss(x,y,len1) :=
     \/ (exists x1,y1,n1. y->RefSll_t{left:x1,right:y1} * lss(x,y1,n1) & len1=n1+2);
 
 
-checkentail lss(x,y,n1) & error & x=y
+checkentail lss(x,y,n1) & n1>320001 & x=y
     |- false;
