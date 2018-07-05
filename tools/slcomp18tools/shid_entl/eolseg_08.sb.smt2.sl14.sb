@@ -21,4 +21,4 @@ pred ls_all(x_12,y_13) :=
 
 
 checkentail u->Refnode{next:v} * v->Refnode{next:t} * ls(x,u) * ls_all(t,y)
-    |- x2->Refnode{next:y} * ls(x,x1) * ls(x1,x2);
+    |- (exists x1,x2. x2->Refnode{next:y} * ls(x,x1) * ls(x1,x2) ) ;

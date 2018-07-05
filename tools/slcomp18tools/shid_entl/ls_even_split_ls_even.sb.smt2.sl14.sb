@@ -17,4 +17,4 @@ pred leven(x_4,y_5) :=
 
 
 checkentail leven(x,y)
-    |- leven(t,y) * leven(x,t);
+    |- (exists t. leven(t,y) * leven(x,t) ) ;

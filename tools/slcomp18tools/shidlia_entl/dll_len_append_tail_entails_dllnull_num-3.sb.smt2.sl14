@@ -21,14 +21,15 @@
                     (= ?hd_1 ?tl_3  )
                 )
             )
-            (exists ((?x_6 Refnode) ) 
+            (exists ((?x_6 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?hd_1
                             (sref (ref next ?x_6) (ref prev ?p_2) ) 
                         ) 
-                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 (+ ?l_5 (- 1) ) ) 
+                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 ?k) 
                     ) ) 
+                    (= ?k (+ ?l_5 (- 1) )   )
                     (<= 1 (+ ?l_5 (- 1) ) ) 
                 )
             ) 
@@ -44,14 +45,15 @@
                 ) ) 
                 (= (+ ?l_9 (- 1) )  0  )
             )
-            (exists ((?x_10 Refnode) ) 
+            (exists ((?x_10 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?hd_7
                             (sref (ref next ?x_10) (ref prev ?p_8) ) 
                         ) 
-                        (dllnull ?x_10 ?hd_7 (+ ?l_9 (- 1) ) ) 
+                        (dllnull ?x_10 ?hd_7 ?k) 
                     ) ) 
+                    (= ?k (+ ?l_9 (- 1) )   )
                     (<= 1 (+ ?l_9 (- 1) ) ) 
                 )
             ) 

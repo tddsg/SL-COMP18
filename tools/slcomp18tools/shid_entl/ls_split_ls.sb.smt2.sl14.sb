@@ -9,4 +9,4 @@ pred ls(x_1,y_2) :=
 
 
 checkentail ls(x,y)
-    |- ls(t,y) * ls(x,t);
+    |- (exists t. ls(t,y) * ls(x,t) ) ;

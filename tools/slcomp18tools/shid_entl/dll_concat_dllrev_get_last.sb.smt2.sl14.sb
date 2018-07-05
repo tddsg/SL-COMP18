@@ -14,4 +14,4 @@ pred dll_rev(hd_6,p_7,tl_8,n_9) :=
 
 
 checkentail dll(u,v,y,x) * dll_rev(x,y,z,t)
-    |- z->Refnode{next:t,prev:w} * dll(u,v,w,z);
+    |- (exists w. z->Refnode{next:t,prev:w} * dll(u,v,w,z) ) ;

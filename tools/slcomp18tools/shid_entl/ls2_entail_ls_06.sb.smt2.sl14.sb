@@ -14,4 +14,4 @@ pred ls2(x_5,y_6) :=
 
 
 checkentail x1->Refnode{next:x2} * x2->Refnode{next:x3} * ls2(x,x1) * ls2(x3,x4)
-    |- v->Refnode{next:x4} * ls(u,v) * ls(x,u);
+    |- (exists u,v. v->Refnode{next:x4} * ls(u,v) * ls(x,u) ) ;

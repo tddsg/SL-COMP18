@@ -22,4 +22,4 @@ pred lsa(x_12,y_13) :=
 
 
 checkentail x1->Refnode{next:x2} * lsl(x,x1) * lsr(x2,y)
-    |- u->Refnode{next:y} * lsl(x,u);
+    |- (exists u. u->Refnode{next:y} * lsl(x,u) ) ;

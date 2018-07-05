@@ -17,4 +17,4 @@ pred leven(x_4,y_5) :=
 
 
 checkentail lodd(x,y)
-    |- t->Refnode{next:y} * leven(x,t);
+    |- (exists t. t->Refnode{next:y} * leven(x,t) ) ;

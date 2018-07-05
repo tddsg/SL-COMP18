@@ -11,5 +11,5 @@ pred DLL_plus(hd,p,tl,n) :=
     \/ (exists x. hd->RefDLL_t{prev:p,next:x} * DLL_plus(x,hd,tl,n));
 
 
-checkentail points_to(x,y,nil) * points_to(y,a,x) * DLL_plus(a,y,c,nil)
+checkentail (exists y,a. points_to(x,y,nil) * points_to(y,a,x) * DLL_plus(a,y,c,nil) ) 
     |- DLL_plus(x,nil,c,nil);

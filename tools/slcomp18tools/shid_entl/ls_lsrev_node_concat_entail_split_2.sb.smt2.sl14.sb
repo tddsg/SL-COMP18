@@ -13,4 +13,4 @@ pred lsrev(x_4,y_5) :=
 
 
 checkentail y->Refnode{next:z} * ls(z,t) * lsrev(x,y)
-    |- u->Refnode{next:v} * ls(x,u) * lsrev(v,t);
+    |- (exists u,v. u->Refnode{next:v} * ls(x,u) * lsrev(v,t) ) ;

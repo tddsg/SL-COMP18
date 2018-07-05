@@ -13,4 +13,4 @@ pred lsrev(x_4,y_5) :=
 
 
 checkentail ls(y,z) * ls(z,t) * lsrev(x,y)
-    |- ls(x,u) * lsrev(u,t);
+    |- (exists u. ls(x,u) * lsrev(u,t) ) ;

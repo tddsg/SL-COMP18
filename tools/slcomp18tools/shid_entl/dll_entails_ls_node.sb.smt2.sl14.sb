@@ -14,4 +14,4 @@ pred ls(x_7,y_8) :=
 
 
 checkentail dll(x,y,z,t)
-    |- z->Refnode{next:t,prev:u} * ls(x,z);
+    |- (exists u. z->Refnode{next:t,prev:u} * ls(x,z) ) ;

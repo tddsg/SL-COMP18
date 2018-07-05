@@ -22,4 +22,4 @@ pred ls_even(x_10,y_11) :=
 
 
 checkentail u->Refnode{next:v} * ls_even(v,y) * ls_odd(x,u)
-    |- x1->Refnode{next:y} * ls2(x,x1);
+    |- (exists x1. x1->Refnode{next:y} * ls2(x,x1) ) ;

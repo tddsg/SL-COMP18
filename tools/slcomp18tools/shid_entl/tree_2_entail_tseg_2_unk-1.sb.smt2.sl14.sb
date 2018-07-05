@@ -15,4 +15,4 @@ pred tseg(x_6,y_7) :=
 
 
 checkentail tree(x) * tree(y)
-    |- tseg(u,nil) * tseg(v,nil);
+    |- (exists u,v. tseg(u,nil) * tseg(v,nil) ) ;

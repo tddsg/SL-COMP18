@@ -9,27 +9,28 @@
 (declare-fun prev () (Field Refnode Refnode) )
 
 ;; IGNORE declare-heap 
-(define-fun dll ((?hd_2 Refnode) (?p_3 Refnode) (?tl_4 Refnode) (?n_5 Refnode) (?len_6 Int) ) 
+(define-fun dll ((?hd_1 Refnode) (?p_2 Refnode) (?tl_3 Refnode) (?n_4 Refnode) (?l_5 Int) ) 
         Space 
     (tospace (or 
             (and 
-                (tobool (pto ?hd_2
-                    (sref (ref next ?n_5) (ref prev ?p_3) ) 
+                (tobool (pto ?hd_1
+                    (sref (ref next ?n_4) (ref prev ?p_2) ) 
                 ) ) 
                 (and 
-                    (= (+ ?len_6 (- 1) )  0  )
-                    (= ?hd_2 ?tl_4  )
+                    (= (+ ?l_5 (- 1) )  0  )
+                    (= ?hd_1 ?tl_3  )
                 )
             )
-            (exists ((?x_7 Refnode) ) 
+            (exists ((?x_6 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
-                        (pto ?hd_2
-                            (sref (ref next ?x_7) (ref prev ?p_3) ) 
+                        (pto ?hd_1
+                            (sref (ref next ?x_6) (ref prev ?p_2) ) 
                         ) 
-                        (dll ?x_7 ?hd_2 ?tl_4 ?n_5 (+ ?len_6 (- 1) ) ) 
+                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 ?k) 
                     ) ) 
-                    (<= 1 (+ ?len_6 (- 1) ) ) 
+                    (= ?k (+ ?l_5 (- 1) )   )
+                    (<= 1 (+ ?l_5 (- 1) ) ) 
                 )
             ) 
         ) 
@@ -45,15 +46,16 @@
                     (= ?x_8 ?y_9  )
                 )
             )
-            (exists ((?anon_11 Refnode) (?u_12 Refnode) ) 
+            (exists ((?anon_11 Refnode) (?u_12 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?x_8
                             (sref (ref next ?u_12) (ref prev ?anon_11) ) 
                         ) 
-                        (ls ?u_12 ?y_9 (+ ?len_10 (- 1) ) ) 
+                        (ls ?u_12 ?y_9 ?k) 
                     ) ) 
-                    (<= 0 (+ ?len_10 (- 1) ) ) 
+                    (= ?k (- ?len_10 1)   )
+                    (<= 0 (- ?len_10 1) ) 
                 )
             ) 
         ) 
@@ -69,13 +71,16 @@
 (assert (tobool (dll x y z t n) )
  )
 
-(assert (not (exists ((?u Refnode) ) 
-        (tobool (ssep 
-            (pto z
-                (sref (ref next t) (ref prev ?u) ) 
-            ) 
-            (ls x z (+ n (- 1) ) ) 
-        ) ) 
+(assert (not (exists ((?u Refnode) (?k Int) ) 
+        (and 
+            (tobool (ssep 
+                (pto z
+                    (sref (ref next t) (ref prev ?u) ) 
+                ) 
+                (ls x z ?k) 
+            ) ) 
+            (= ?k (+ n (- 1) )   )
+        )
     )  )
  )
 (check-sat)

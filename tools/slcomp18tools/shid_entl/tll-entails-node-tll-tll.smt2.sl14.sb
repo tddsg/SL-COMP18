@@ -12,4 +12,4 @@ pred TLL_plus(root,pra,ll,lr) :=
 
 
 checkentail TLL_plus(a,nil,c,nil)
-    |- a->RefTLL_t{left:l,right:r,next:nil,parent:nil} * TLL_plus(l,a,c,z) * TLL_plus(r,a,z,nil);
+    |- (exists l,r,z. a->RefTLL_t{left:l,right:r,next:nil,parent:nil} * TLL_plus(l,a,c,z) * TLL_plus(r,a,z,nil) ) ;

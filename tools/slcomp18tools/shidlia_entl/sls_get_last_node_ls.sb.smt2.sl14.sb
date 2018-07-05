@@ -1,7 +1,7 @@
 
 data Refnode {
     Refnode next;
-    unknown val;
+    int val;
 };
 
 pred ls(x_2,y_3) := 
@@ -10,8 +10,8 @@ pred ls(x_2,y_3) :=
 
 pred sls(x_1,y_2,l_3,u_4) := 
     (x_1->Refnode{next:y_2,val:l_3} & l_3=u_4)
-    \/ (exists t_5,a_6. x_1->Refnode{next:t_5,val:l_3} * sls(t_5,y_2,a_6,u_4) & error & error);
+    \/ (exists t_5,a_6. x_1->Refnode{next:t_5,val:l_3} * sls(t_5,y_2,a_6,u_4) & a_6<=u_4 & l_3<=a_6);
 
 
 checkentail sls(x,y,l,u)
-    |- t->Refnode{next:y,val:u} * ls(x,t);
+    |- (exists t. t->Refnode{next:y,val:u} * ls(x,t) ) ;

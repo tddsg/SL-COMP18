@@ -12,4 +12,4 @@ pred DLL_plus(hd,p,tl,n) :=
 
 
 checkentail DLL_plus(x,nil,c,nil)
-    |- points_to(x,y,nil) * points_to(y,a,x) * DLL_plus(a,y,c,nil);
+    |- (exists y,a. points_to(x,y,nil) * points_to(y,a,x) * DLL_plus(a,y,c,nil) ) ;

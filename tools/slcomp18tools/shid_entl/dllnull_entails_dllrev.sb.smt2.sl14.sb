@@ -14,4 +14,4 @@ pred dllnull(hd_6,p_7) :=
 
 
 checkentail dllnull(x,y)
-    |- dll_rev(x,y,t,nil);
+    |- (exists t. dll_rev(x,y,t,nil) ) ;

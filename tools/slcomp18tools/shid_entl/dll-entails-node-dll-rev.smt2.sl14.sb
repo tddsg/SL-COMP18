@@ -14,4 +14,4 @@ pred DLL_plus_rev(hd,p,tl,n) :=
 
 
 checkentail DLL_plus(a,nil,c,nil)
-    |- x->RefDLL_t{prev:b,next:n} * DLL_plus_rev(a,nil,b,x) * DLL_plus(n,x,c,nil);
+    |- (exists x,n,b. x->RefDLL_t{prev:b,next:n} * DLL_plus_rev(a,nil,b,x) * DLL_plus(n,x,c,nil) ) ;

@@ -18,15 +18,16 @@
                     (= ?x_1 ?y_2  )
                 )
             )
-            (exists ((?u_4 Refnode) ) 
+            (exists ((?u_4 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?x_1
                             (ref next ?u_4) 
                         ) 
-                        (ls ?u_4 ?y_2 (+ ?n_3 (- 1) ) ) 
+                        (ls ?u_4 ?y_2 ?k) 
                     ) ) 
-                    (<= 0 (+ ?n_3 (- 1) ) ) 
+                    (= ?k (- ?n_3 1)   )
+                    (<= 0 (- ?n_3 1) ) 
                 )
             ) 
         ) 
@@ -43,25 +44,28 @@
     )
  )
 
-(assert (not (exists ((?u Refnode) (?v Refnode) (?t Refnode) (?w Refnode) (?r Refnode) ) 
-        (tobool (ssep 
-            (pto ?r
-                (ref next y) 
-            ) 
-            (pto ?t
-                (ref next ?w) 
-            ) 
-            (pto ?u
-                (ref next ?v) 
-            ) 
-            (pto ?w
-                (ref next ?r) 
-            ) 
-            (pto x
-                (ref next ?u) 
-            ) 
-            (ls ?v ?t (+ n (- 5) ) ) 
-        ) ) 
+(assert (not (exists ((?u Refnode) (?v Refnode) (?t Refnode) (?w Refnode) (?r Refnode) (?k Int) ) 
+        (and 
+            (tobool (ssep 
+                (pto ?r
+                    (ref next y) 
+                ) 
+                (pto ?t
+                    (ref next ?w) 
+                ) 
+                (pto ?u
+                    (ref next ?v) 
+                ) 
+                (pto ?w
+                    (ref next ?r) 
+                ) 
+                (pto x
+                    (ref next ?u) 
+                ) 
+                (ls ?v ?t ?k) 
+            ) ) 
+            (= ?k (- n 5)   )
+        )
     )  )
  )
 (check-sat)

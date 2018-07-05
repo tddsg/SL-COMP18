@@ -17,19 +17,20 @@
                     (sref (ref next ?n_4) (ref prev ?p_2) ) 
                 ) ) 
                 (and 
-                    (= (+ ?len_5 (- 1) )  0  )
+                    (= (- ?len_5 1)  0  )
                     (= ?hd_1 ?tl_3  )
                 )
             )
-            (exists ((?x_6 Refnode) ) 
+            (exists ((?x_6 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?hd_1
                             (sref (ref next ?x_6) (ref prev ?p_2) ) 
                         ) 
-                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 (+ ?len_5 (- 1) ) ) 
+                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 ?k) 
                     ) ) 
-                    (<= 1 (+ ?len_5 (- 1) ) ) 
+                    (= ?k (- ?len_5 1)   )
+                    (<= 1 (- ?len_5 1) ) 
                 )
             ) 
         ) 
@@ -48,25 +49,28 @@
     )
  )
 
-(assert (not (exists ((?u1 Refnode) (?u2 Refnode) (?u3 Refnode) (?u4 Refnode) (?u5 Refnode) ) 
-        (tobool (ssep 
-            (pto ?u1
-                (sref (ref next ?u2) (ref prev x) ) 
-            ) 
-            (pto ?u2
-                (sref (ref next ?u3) (ref prev ?u1) ) 
-            ) 
-            (pto ?u5
-                (sref (ref next z) (ref prev ?u4) ) 
-            ) 
-            (pto x
-                (sref (ref next ?u1) (ref prev y) ) 
-            ) 
-            (pto z
-                (sref (ref next t) (ref prev ?u5) ) 
-            ) 
-            (dll ?u3 ?u2 ?u4 ?u5 (+ n (- 5) ) ) 
-        ) ) 
+(assert (not (exists ((?u1 Refnode) (?u2 Refnode) (?u3 Refnode) (?u4 Refnode) (?u5 Refnode) (?k Int) ) 
+        (and 
+            (tobool (ssep 
+                (pto ?u1
+                    (sref (ref next ?u2) (ref prev x) ) 
+                ) 
+                (pto ?u2
+                    (sref (ref next ?u3) (ref prev ?u1) ) 
+                ) 
+                (pto ?u5
+                    (sref (ref next z) (ref prev ?u4) ) 
+                ) 
+                (pto x
+                    (sref (ref next ?u1) (ref prev y) ) 
+                ) 
+                (pto z
+                    (sref (ref next t) (ref prev ?u5) ) 
+                ) 
+                (dll ?u3 ?u2 ?u4 ?u5 ?k) 
+            ) ) 
+            (= ?k (+ n (- 5) )   )
+        )
     )  )
  )
 (check-sat)

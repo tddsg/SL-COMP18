@@ -17,19 +17,20 @@
                     (sref (ref next ?n_4) (ref prev ?p_2) ) 
                 ) ) 
                 (and 
-                    (= (+ ?len_5 (- 1) )  0  )
+                    (= (- ?len_5 1)  0  )
                     (= ?hd_1 ?tl_3  )
                 )
             )
-            (exists ((?x_6 Refnode) ) 
+            (exists ((?x_6 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?hd_1
                             (sref (ref next ?x_6) (ref prev ?p_2) ) 
                         ) 
-                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 (+ ?len_5 (- 1) ) ) 
+                        (dll ?x_6 ?hd_1 ?tl_3 ?n_4 ?k) 
                     ) ) 
-                    (<= 1 (+ ?len_5 (- 1) ) ) 
+                    (= ?k (- ?len_5 1)   )
+                    (<= 1 (- ?len_5 1) ) 
                 )
             ) 
         ) 
@@ -40,8 +41,14 @@
 (declare-fun y () Refnode)
 (declare-fun z () Refnode)
 (declare-fun t () Refnode)
+(declare-fun k1000 () Int)
+(declare-fun k995 () Int)
 
-(assert (tobool (dll x y z t 1000) )
+(assert (and 
+        (= k1000 1000  )
+        (= k995 995  )
+        (tobool (dll x y z t k1000) )
+    )
  )
 
 (assert (not (exists ((?u1 Refnode) (?u2 Refnode) (?u3 Refnode) (?u4 Refnode) (?u5 Refnode) ) 
@@ -61,7 +68,7 @@
             (pto z
                 (sref (ref next t) (ref prev ?u5) ) 
             ) 
-            (dll x y ?u1 ?u2 995) 
+            (dll x y ?u1 ?u2 k995) 
         ) ) 
     )  )
  )
