@@ -18,14 +18,15 @@
                     (= ?x_1 ?y_2  )
                 )
             )
-            (exists ((?u_4 Refnode) ) 
+            (exists ((?u_4 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?x_1
                             (ref next ?u_4) 
                         ) 
-                        (ls ?u_4 ?y_2 (+ ?n_3 (- 1) ) ) 
+                        (ls ?u_4 ?y_2 ?k) 
                     ) ) 
+                    (= ?k (+ ?n_3 (- 1) )   )
                     (<= 0 (+ ?n_3 (- 1) ) ) 
                 )
             ) 
@@ -36,13 +37,19 @@
 (declare-fun x () Refnode)
 (declare-fun y () Refnode)
 (declare-fun z () Refnode)
+(declare-fun k1000 () Int)
+(declare-fun k2000 () Int)
 
-(assert (tobool (ssep 
-        (ls x y 1000) 
-        (ls y z 1000) 
-    ) ) 
+(assert (and 
+        (tobool (ssep 
+            (ls x y k1000) 
+            (ls y z k1000) 
+        ) ) 
+        (= k1000 1000  )
+        (= k2000 2000  )
+    )
  )
 
-(assert (not (tobool (ls x z 2000) ) )
+(assert (not (tobool (ls x z k2000) ) )
  )
 (check-sat)

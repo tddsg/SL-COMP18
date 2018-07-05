@@ -1,13 +1,13 @@
 
 data Refnode {
     Refnode next;
-    unknown val;
+    int val;
 };
 
 pred ls(x_1,y_2,l_3,u_4) := 
     (x_1->Refnode{next:y_2,val:l_3} & l_3=u_4)
-    \/ (exists t_5,a_6. x_1->Refnode{next:t_5,val:l_3} * ls(t_5,y_2,a_6,u_4) & error & error);
+    \/ (exists t_5,a_6. x_1->Refnode{next:t_5,val:l_3} * ls(t_5,y_2,a_6,u_4) & a_6<=u_4 & l_3<=a_6);
 
 
-checkentail ls(x,y,l1,u1) * ls(y,z,l2,u2) & error
+checkentail ls(x,y,l1,u1) * ls(y,z,l2,u2) & u1<=l2
     |- ls(x,z,l1,u2);

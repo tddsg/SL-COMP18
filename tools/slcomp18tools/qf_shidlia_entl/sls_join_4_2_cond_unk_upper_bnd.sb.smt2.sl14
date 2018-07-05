@@ -46,15 +46,21 @@
 (declare-fun z () Refnode)
 (declare-fun u2 () Int)
 (declare-fun l3 () Int)
+(declare-fun k100 () Int)
+(declare-fun k101 () Int)
+(declare-fun k300 () Int)
 
 (assert (and 
         (tobool (ssep 
             (sls t w l4 u4) 
-            (sls x y l1 100) 
-            (sls y z 101 u2) 
-            (sls z t l3 300) 
+            (sls x y l1 k100) 
+            (sls y z k101 u2) 
+            (sls z t l3 k300) 
         ) ) 
         (and 
+            (= k100 100  )
+            (= k101 101  )
+            (= k300 300  )
             (<= u2 l3) 
             (<= 300 l4) 
         )

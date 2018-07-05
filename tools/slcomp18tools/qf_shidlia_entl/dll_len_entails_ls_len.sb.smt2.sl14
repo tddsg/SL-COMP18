@@ -21,14 +21,15 @@
                     (= ?hd_2 ?tl_4  )
                 )
             )
-            (exists ((?x_7 Refnode) ) 
+            (exists ((?x_7 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?hd_2
                             (sref (ref next ?x_7) (ref prev ?p_3) ) 
                         ) 
-                        (dll ?x_7 ?hd_2 ?tl_4 ?n_5 (+ ?len_6 (- 1) ) ) 
+                        (dll ?x_7 ?hd_2 ?tl_4 ?n_5 ?k) 
                     ) ) 
+                    (= ?k (+ ?len_6 (- 1) )   )
                     (<= 1 (+ ?len_6 (- 1) ) ) 
                 )
             ) 
@@ -45,14 +46,15 @@
                     (= ?x_8 ?y_9  )
                 )
             )
-            (exists ((?anon_11 Refnode) (?u_12 Refnode) ) 
+            (exists ((?anon_11 Refnode) (?u_12 Refnode) (?k Int) ) 
                 (and 
                     (tobool (ssep 
                         (pto ?x_8
                             (sref (ref next ?u_12) (ref prev ?anon_11) ) 
                         ) 
-                        (ls ?u_12 ?y_9 (+ ?len_10 (- 1) ) ) 
+                        (ls ?u_12 ?y_9 ?k) 
                     ) ) 
+                    (= ?k (+ ?len_10 (- 1) )   )
                     (<= 0 (+ ?len_10 (- 1) ) ) 
                 )
             ) 

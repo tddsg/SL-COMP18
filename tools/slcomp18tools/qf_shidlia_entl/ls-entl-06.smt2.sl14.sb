@@ -9,4 +9,4 @@ pred lls(in,len1,out,len2) :=
 
 
 checkentail lls(X,n0,Y,n1) * lls(Y,n1,Z,n2) & n0=n1+2 & n1=n2+1
-    |- lls(X,n0,Z,n2) & error;
+    |- lls(X,n0,Z,n2) & n0>n2+3;
