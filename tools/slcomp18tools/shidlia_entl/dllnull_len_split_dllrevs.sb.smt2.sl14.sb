@@ -1,0 +1,17 @@
+
+data Refnode {
+    Refnode next;
+    Refnode prev;
+};
+
+pred dll_rev(hd_7,p_8,tl_9,n_10,l_11) := 
+    (hd_7->Refnode{next:n_10,prev:p_8} & l_11-1=0 & hd_7=tl_9)
+    \/ (exists x_12,k. tl_9->Refnode{next:n_10,prev:x_12} * dll_rev(hd_7,p_8,x_12,tl_9,k) & k=l_11-1 & 1<=l_11-1);
+
+pred dllnull(hd_7,p_8,l_9) := 
+    (hd_7->Refnode{next:nil,prev:p_8} & l_9-1=0)
+    \/ (exists x_10,k. hd_7->Refnode{next:x_10,prev:p_8} * dllnull(x_10,hd_7,k) & k=l_9-1 & 1<=l_9-1);
+
+
+checkentail dllnull(x,y,n) & 2<=n
+    |- (exists z,t,u,n1,n2. dll_rev(t,z,u,nil,n2) * dll_rev(x,y,z,t,n1) & n=n1+n2 ) ;
