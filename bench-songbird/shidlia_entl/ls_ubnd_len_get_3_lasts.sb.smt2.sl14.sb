@@ -1,0 +1,12 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ls(x_1,y_2,n_3) := 
+    (emp & n_3=0 & x_1=y_2)
+    \/ (exists u_4,k. x_1->Refnode{next:u_4} * ls(u_4,y_2,k) & k=n_3-1 & 0<=n_3-1);
+
+
+checkentail ls(x,y,n) & 1000<=n
+    |- (exists u,v,t,k. t->Refnode{next:y} * u->Refnode{next:v} * v->Refnode{next:t} * ls(x,u,k) & k=n-3 ) ;

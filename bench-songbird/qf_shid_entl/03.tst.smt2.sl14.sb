@@ -1,0 +1,12 @@
+
+data RefGTyp {
+    RefGTyp f0;
+};
+
+pred List(x,y) := 
+    (x->RefGTyp{f0:y} & nil!=x)
+    \/ (exists xp. x->RefGTyp{f0:xp} * List(xp,y) & nil!=x);
+
+
+checkentail List(x,y) * y->RefGTyp{f0:z}
+    |- List(x,z);

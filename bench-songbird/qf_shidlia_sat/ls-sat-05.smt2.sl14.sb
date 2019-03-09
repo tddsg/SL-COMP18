@@ -1,0 +1,13 @@
+
+data RefSll_t {
+    RefSll_t next;
+    int data_sbd;
+};
+
+pred lsls(in,dt1,len1,out,dt2,len2) := 
+    (emp & in=out & dt1=dt2 & len1=len2)
+    \/ (exists u,dt3,len3. in->RefSll_t{next:u,data_sbd:dt1} * lsls(u,dt3,len3,out,dt2,len2) & dt1<dt3+0 & len1=len3+1);
+
+
+checkentail lsls(y_emp,d1,n1,u_emp,d2,n2) * z_emp->RefSll_t{next:y_emp,data_sbd:d3} * lsls(y_emp,d4,n3,w_emp,d5,n4) & d1!=d2 & n3=n4+3
+    |- false;

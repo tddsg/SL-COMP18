@@ -1,0 +1,24 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ll(in) := 
+    (emp & nil=in)
+    \/ (exists q_20. in->Refnode{next:q_20} * ll(q_20));
+
+pred lseg(in,p) := 
+    (emp & in=p)
+    \/ (exists p_19,q_18. in->Refnode{next:q_18} * lseg(q_18,p_19) & p=p_19);
+
+pred ll_e1(in) := (exists q. in->Refnode{next:q} * ll(q));
+
+pred ll_e2(in) := (exists p,q. in->Refnode{next:p} * ll(q) & p=q);
+
+pred node_e1(in,q) := (exists p. in->Refnode{next:p} & q=p);
+
+pred lseg_e1(in,p) := (exists q. lseg(in,p) & p=q);
+
+
+checkentail ll(q) * xprm->Refnode{next:q} & v1prm=q & nil!=q & xprm=x & yprm=y & nil!=x
+    |- ll(v1prm) * xprm->Refnode{next:q} & v1prm=q & nil!=q & xprm=x & yprm=y & nil!=x & nil!=v1prm;

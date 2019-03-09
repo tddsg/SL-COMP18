@@ -1,0 +1,17 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred BinListFirst(x) := 
+    (emp)
+    \/ (exists yp,xp. x->RefGTyp{f0:yp,f1:xp} * BinListFirst(yp) & nil!=x);
+
+pred BinTree(x) := 
+    (emp)
+    \/ (exists yp,xp. x->RefGTyp{f0:yp,f1:xp} * BinTree(yp) * BinTree(xp) & nil!=x);
+
+
+checkentail BinListFirst(x)
+    |- BinTree(x);

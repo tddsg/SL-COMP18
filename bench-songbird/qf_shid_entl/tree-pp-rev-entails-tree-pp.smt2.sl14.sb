@@ -1,0 +1,24 @@
+
+data RefTPP_t {
+    RefTPP_t left;
+    RefTPP_t right;
+    RefTPP_t parent;
+};
+
+pred TPP_plus(x,back) := 
+    (x->RefTPP_t{left:nil,right:nil,parent:back})
+    \/ (exists y,z. x->RefTPP_t{left:y,right:z,parent:back} * TPP_plus(y,x) * TPP_plus(z,x));
+
+pred TPP_aux(x,down,top,b) := 
+    (exists up,right. x->RefTPP_t{left:down,right:right,parent:up} * TPP_plus(right,x) * TPP_aux(up,x,top,b))
+    \/ (exists up,left. x->RefTPP_t{left:left,right:down,parent:up} * TPP_plus(left,x) * TPP_aux(up,x,top,b))
+    \/ (exists right. x->RefTPP_t{left:down,right:right,parent:b} * TPP_plus(right,x) & x=top)
+    \/ (exists left. x->RefTPP_t{left:left,right:down,parent:b} * TPP_plus(left,x) & x=top);
+
+pred TPP_plus_rev(top,b) := 
+    (top->RefTPP_t{left:nil,right:nil,parent:b})
+    \/ (exists x,up. x->RefTPP_t{left:nil,right:nil,parent:up} * TPP_aux(up,x,top,b));
+
+
+checkentail TPP_plus_rev(x,y)
+    |- TPP_plus(x,y);

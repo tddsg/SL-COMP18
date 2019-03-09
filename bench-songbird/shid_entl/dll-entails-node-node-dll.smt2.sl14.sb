@@ -1,0 +1,15 @@
+
+data RefDLL_t {
+    RefDLL_t prev;
+    RefDLL_t next;
+};
+
+pred points_to(a,b,c) := (a->RefDLL_t{prev:c,next:b});
+
+pred DLL_plus(hd,p,tl,n) := 
+    (hd->RefDLL_t{prev:p,next:n} & hd=tl)
+    \/ (exists x. hd->RefDLL_t{prev:p,next:x} * DLL_plus(x,hd,tl,n));
+
+
+checkentail DLL_plus(x,nil,c,nil)
+    |- (exists y,a. points_to(x,y,nil) * points_to(y,a,x) * DLL_plus(a,y,c,nil) ) ;

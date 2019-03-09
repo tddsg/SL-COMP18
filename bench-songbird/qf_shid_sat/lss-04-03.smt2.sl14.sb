@@ -1,0 +1,30 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred Q(x,y) := 
+    (exists d,c. x->RefGTyp{f0:d,f1:c} * P(d) & nil=y & nil!=x)
+    \/ (exists d,c. y->RefGTyp{f0:d,f1:c} * Q(x,c) & nil!=y)
+    \/ (exists d. S1(x,y,d) & nil!=x);
+
+pred P(x) := 
+    (emp & nil=x)
+    \/ (Q(x,x) & nil!=x);
+
+pred R(x) := (P(x) & nil!=x);
+
+pred S1(x,y,z) := 
+    (exists c. y->RefGTyp{f0:x,f1:c} * z->RefGTyp{f0:c,f1:c} * P(z) & nil=nil)
+    \/ (exists c,d. x->RefGTyp{f0:c,f1:d} * Q(x,y) & nil=c & nil=d)
+    \/ (exists c,d. S2(c,y,z,c) & nil!=c);
+
+pred S2(x,y,z,t) := 
+    (exists c. y->RefGTyp{f0:x,f1:c} * z->RefGTyp{f0:c,f1:x} * P(t) & nil=nil)
+    \/ (exists c,d. x->RefGTyp{f0:c,f1:d} * Q(x,y) & nil=c & nil=d)
+    \/ (S1(x,y,z) & nil=y);
+
+
+checkentail R(x0)
+    |- false;

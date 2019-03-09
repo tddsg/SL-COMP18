@@ -1,0 +1,13 @@
+
+data Refnode {
+    Refnode next;
+    Refnode prev;
+};
+
+pred dll_rev(hd_1,p_2,tl_3,n_4) := 
+    (hd_1->Refnode{next:n_4,prev:p_2} & hd_1=tl_3)
+    \/ (exists x_5. tl_3->Refnode{next:n_4,prev:x_5} * dll_rev(hd_1,p_2,x_5,tl_3));
+
+
+checkentail dll_rev(u,v,y,x) * dll_rev(x,y,z,t)
+    |- dll_rev(u,v,z,t);

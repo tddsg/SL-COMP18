@@ -1,0 +1,16 @@
+
+data RefAtll_t {
+    RefAtll_t lson;
+    RefAtll_t rson;
+    RefAtll_t next;
+};
+
+pred atll(r,ll,rl) := 
+    (r->RefAtll_t{lson:nil,rson:nil,next:rl} & r!=rl & r=ll)
+    \/ (exists ls,rs,z. r->RefAtll_t{lson:ls,rson:rs,next:nil} * atll(ls,ll,z) * atll(rs,z,rl) & r!=ll & r!=rl);
+
+pred R(x,y) := (atll(x,nil,y) * y->RefAtll_t{lson:nil,rson:nil,next:nil});
+
+
+checkentail R(x0,y0)
+    |- false;

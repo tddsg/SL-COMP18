@@ -1,0 +1,25 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred one(x) := (emp & nil!=x);
+
+pred zero(x) := (emp & nil=x);
+
+pred succ2rec(x1,x2,y1,y2) := 
+    (zero(x1) * one(y1) & x2=y2)
+    \/ (succ1rec(x2,y2) * one(x1) * zero(y1));
+
+pred Q(y1,y2) := 
+    (zero(y1) * zero(y2))
+    \/ (exists x1,x2. succ2rec(x1,x2,y1,y2) * Q(x1,x2));
+
+pred P(x1,x2) := (one(x1) * one(x2) * Q(x1,x2));
+
+pred succ1rec(x1,y1) := (zero(x1) * one(y1));
+
+
+checkentail P(x0,x1)
+    |- false;

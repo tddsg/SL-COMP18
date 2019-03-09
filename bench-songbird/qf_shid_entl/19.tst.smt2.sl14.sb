@@ -1,0 +1,12 @@
+
+data RefGTyp {
+    RefGTyp f0;
+};
+
+pred ls(x,y) := 
+    (emp & x=y)
+    \/ (exists xp. x->RefGTyp{f0:xp} * ls(xp,y) & nil!=x & x!=y);
+
+
+checkentail x->RefGTyp{f0:y} * ls(y,z) & x!=z
+    |- ls(x,z);

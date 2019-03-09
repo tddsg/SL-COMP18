@@ -1,0 +1,13 @@
+
+data RefDll_t {
+    RefDll_t next;
+    RefDll_t prev;
+};
+
+pred ldll(E,P,len1,F,L,len2) := 
+    (emp & E=F & P=L & len1=len2)
+    \/ (exists u,len3. E->RefDll_t{next:u,prev:P} * ldll(u,E,len3,F,L,len2) & len1=len3+1);
+
+
+checkentail ldll(E1,E1_p,x1,E2,E2_p,x2_1) * ldll(E2,E2_p,x2_2,E3,E3_p,x3) & x2_1=x2_2
+    |- ldll(E1,E1_p,x1,E3,E3_p,x3);

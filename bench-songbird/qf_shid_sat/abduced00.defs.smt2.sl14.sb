@@ -1,0 +1,95 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred I003(a,b) := 
+    (I008(a,b) & nil=b)
+    \/ (I007(a,b) & nil!=b);
+
+pred I001(a) := (exists a00. a->RefGTyp{f0:a00,f1:nil} * I003(a,a00) & nil!=a);
+
+pred ls(a) := 
+    (emp & nil=a)
+    \/ (I001(a) & nil!=a);
+
+pred I21063(a,b,c,d,e,f,g,h) := 
+    (I21093(a,b,c,d,e,f,g,h) & nil=h)
+    \/ (I21092(a,b,c,d,e,f,g,h) & nil!=h);
+
+pred I3724(a,b,c,d,e,f,g) := (exists a00. g->RefGTyp{f0:a00,f1:nil} * I21063(a,b,c,d,e,f,g,a00) & nil!=g);
+
+pred I21092(a,b,c,d,e,f,g,h) := (I3724(a,b,c,d,e,f,h));
+
+pred I3752(a,b,c,d,e,f,g) := (exists a00. a->RefGTyp{f0:a00,f1:nil} * I10117(a,b,c,d,e,f,g,a00) & nil!=a);
+
+pred I3725(a,b,c,d,e,f,g) := 
+    (emp & nil=a)
+    \/ (I3752(a,b,c,d,e,f,g) & nil!=a);
+
+pred I21093(a,b,c,d,e,f,g,h) := (I3725(a,b,c,d,e,f,h));
+
+pred I10117(a,b,c,d,e,f,g,h) := (I3725(h,b,c,d,e,f,g));
+
+pred I3670(a,b,c,d,e,f,g) := 
+    (I3725(a,b,c,d,e,f,g) & nil=g)
+    \/ (I3724(a,b,c,d,e,f,g) & nil!=g);
+
+pred I3572(a,b,c,d,e,f) := (exists a00. f->RefGTyp{f0:a00,f1:nil} * I3670(a,b,c,d,e,f,a00) & nil!=f);
+
+pred I3623(a,b,c,d,e,f) := (exists a00. a->RefGTyp{f0:a00,f1:nil} * I3633(a,b,c,d,e,f,a00) & nil!=a);
+
+pred I3573(a,b,c,d,e,f) := 
+    (emp & a=f)
+    \/ (I3623(a,b,c,d,e,f) & a!=f);
+
+pred I3633(a,b,c,d,e,f,g) := (I3573(g,b,c,d,e,f));
+
+pred I3552(a,b,c,d,e,f) := 
+    (I3573(a,b,c,d,e,f) & nil=f)
+    \/ (I3572(a,b,c,d,e,f) & nil!=f);
+
+pred I634(a,b,c,d,e) := (exists a00. e->RefGTyp{f0:a00,f1:nil} * I3552(a,b,c,d,e,a00) & nil!=e);
+
+pred I664(a,b,c,d,e) := (exists a00. b->RefGTyp{f0:a00,f1:nil} * I2011(a,b,c,d,e,a00) & nil!=b);
+
+pred I635(a,b,c,d,e) := 
+    (emp & b=e)
+    \/ (I664(a,b,c,d,e) & b!=e);
+
+pred I2011(a,b,c,d,e,f) := (I635(a,f,c,d,e));
+
+pred I618(a,b,c,d,e) := 
+    (I635(a,b,c,d,e) & nil=e)
+    \/ (I634(a,b,c,d,e) & nil!=e);
+
+pred I046(a,b,c,d) := (exists a00. d->RefGTyp{f0:a00,f1:nil} * I618(a,b,c,d,a00) & nil!=d);
+
+pred I088(a,b,c,d) := (exists a00. b->RefGTyp{f0:a00,f1:nil} * I337(a,b,c,d,a00) & nil!=b);
+
+pred I047(a,b,c,d) := 
+    (emp & b=d)
+    \/ (I088(a,b,c,d) & b!=d);
+
+pred I337(a,b,c,d,e) := (I047(a,e,c,d));
+
+pred I034(a,b,c,d) := 
+    (I047(a,b,c,d) & nil=d)
+    \/ (I046(a,b,c,d) & nil!=d);
+
+pred I021(a,b,c) := (exists a00. c->RefGTyp{f0:a00,f1:nil} * I034(a,b,c,a00) & nil!=c);
+
+pred I008(a,b) := (emp);
+
+pred I022(a,b,c) := (I008(b,c));
+
+pred I013(a,b,c) := 
+    (I022(a,b,c) & nil=c)
+    \/ (I021(a,b,c) & nil!=c);
+
+pred I007(a,b) := (exists a00. b->RefGTyp{f0:a00,f1:nil} * I013(a,b,a00) & nil!=b);
+
+
+checkentail ls(x0)
+    |- false;

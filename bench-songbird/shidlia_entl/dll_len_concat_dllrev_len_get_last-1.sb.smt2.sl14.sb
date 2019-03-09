@@ -1,0 +1,17 @@
+
+data Refnode {
+    Refnode next;
+    Refnode prev;
+};
+
+pred dll(hd_2,p_3,tl_4,n_5,len_6) := 
+    (hd_2->Refnode{next:n_5,prev:p_3} & len_6+(- 1)=0 & hd_2=tl_4)
+    \/ (exists x_7,k. hd_2->Refnode{next:x_7,prev:p_3} * dll(x_7,hd_2,tl_4,n_5,k) & k=len_6+(- 1) & 1<=len_6+(- 1));
+
+pred dll_rev(hd_8,p_9,tl_10,n_11,len_12) := 
+    (hd_8->Refnode{next:n_11,prev:p_9} & len_12+(- 1)=0 & hd_8=tl_10)
+    \/ (exists x_13,k. tl_10->Refnode{next:n_11,prev:x_13} * dll_rev(hd_8,p_9,x_13,tl_10,k) & k=len_12+(- 1) & 1<=len_12+(- 1));
+
+
+checkentail dll(x,y,u,v,k100) * dll_rev(v,u,z,t,k200) & k100=100 & k200=200 & k299=299
+    |- (exists u_1. z->Refnode{next:t,prev:u_1} * dll(x,y,u_1,z,k299) ) ;

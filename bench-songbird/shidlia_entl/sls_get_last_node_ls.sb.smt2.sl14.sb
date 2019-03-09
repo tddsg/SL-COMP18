@@ -1,0 +1,17 @@
+
+data Refnode {
+    Refnode next;
+    int val;
+};
+
+pred ls(x_2,y_3) := 
+    (emp & x_2=y_3)
+    \/ (exists anon_4,t_5. x_2->Refnode{next:t_5,val:anon_4} * ls(t_5,y_3));
+
+pred sls(x_1,y_2,l_3,u_4) := 
+    (x_1->Refnode{next:y_2,val:l_3} & l_3=u_4)
+    \/ (exists t_5,a_6. x_1->Refnode{next:t_5,val:l_3} * sls(t_5,y_2,a_6,u_4) & a_6<=u_4 & l_3<=a_6);
+
+
+checkentail sls(x,y,l,u)
+    |- (exists t. t->Refnode{next:y,val:u} * ls(x,t) ) ;

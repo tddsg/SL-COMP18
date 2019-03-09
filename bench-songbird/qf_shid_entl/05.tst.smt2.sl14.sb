@@ -1,0 +1,12 @@
+
+data RefGTyp {
+    RefGTyp f0;
+};
+
+pred PeList(x,y) := 
+    (emp & x=y)
+    \/ (exists xp. x->RefGTyp{f0:xp} * PeList(xp,y) & nil!=x);
+
+
+checkentail PeList(x,y) * y->RefGTyp{f0:z}
+    |- PeList(x,z);

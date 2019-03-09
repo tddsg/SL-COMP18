@@ -1,0 +1,13 @@
+
+data Refnode {
+    Refnode next;
+    Refnode prev;
+};
+
+pred dll(hd_1,p_2,tl_3,n_4) := 
+    (hd_1->Refnode{next:n_4,prev:p_2} & hd_1=tl_3)
+    \/ (exists x_5. hd_1->Refnode{next:x_5,prev:p_2} * dll(x_5,hd_1,tl_3,n_4));
+
+
+checkentail t->Refnode{next:u,prev:z} * dll(x,y,z,t)
+    |- dll(x,y,t,u);

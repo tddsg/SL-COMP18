@@ -1,0 +1,16 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ls(x_1,y_2) := 
+    (emp & x_1=y_2)
+    \/ (exists u_3. x_1->Refnode{next:u_3} * ls(u_3,y_2));
+
+pred lsrev(x_4,y_5) := 
+    (emp & x_4=y_5)
+    \/ (exists u_6. u_6->Refnode{next:y_5} * lsrev(x_4,u_6));
+
+
+checkentail ls(y,z) * ls(z,t) * lsrev(x,y)
+    |- lsrev(x,t);

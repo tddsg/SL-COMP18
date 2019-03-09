@@ -1,0 +1,20 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred ls(x_1,y_2) := 
+    (emp & x_1=y_2)
+    \/ (exists u_3. x_1->Refnode{next:u_3} * ls(u_3,y_2));
+
+pred lodd(x_7,y_8) := 
+    (x_7->Refnode{next:y_8})
+    \/ (exists u_9. x_7->Refnode{next:u_9} * leven(u_9,y_8));
+
+pred leven(x_4,y_5) := 
+    (emp & x_4=y_5)
+    \/ (exists u_6. x_4->Refnode{next:u_6} * lodd(u_6,y_5));
+
+
+checkentail z->Refnode{next:t} * leven(x,z)
+    |- lodd(x,t);

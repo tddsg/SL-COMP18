@@ -1,0 +1,25 @@
+
+data Refnode {
+    Refnode next;
+};
+
+pred lsl(x_2,y_3) := 
+    (emp & x_2=y_3)
+    \/ (exists u_4. x_2->Refnode{next:u_4} * lsl(u_4,y_3));
+
+pred lsr(x_5,y_6) := 
+    (emp & x_5=y_6)
+    \/ (exists u_7. u_7->Refnode{next:y_6} * lsr(x_5,u_7));
+
+pred lslr(x_8,y_9) := 
+    (emp & x_8=y_9)
+    \/ (exists u_10. x_8->Refnode{next:u_10} * lslr(u_10,y_9))
+    \/ (exists u_11. u_11->Refnode{next:y_9} * lslr(x_8,u_11));
+
+pred lsa(x_12,y_13) := 
+    (lsl(x_12,y_13))
+    \/ (lsr(x_12,y_13));
+
+
+checkentail lsl(x,x1) * lsr(x1,y)
+    |- lsr(x,y);

@@ -1,0 +1,14 @@
+
+data RefTll_t {
+    RefTll_t lson;
+    RefTll_t rson;
+    RefTll_t next;
+};
+
+pred tll(r,ll,rl) := 
+    (r->RefTll_t{lson:nil,rson:nil,next:rl} & r=ll)
+    \/ (exists ls,rs,z. r->RefTll_t{lson:ls,rson:rs,next:nil} * tll(ls,ll,z) * tll(rs,z,rl));
+
+
+checkentail tll(x0,x1,x2) * tll(x2,x3,x4) * tll(x4,x5,x6) * tll(x6,x7,x8) * tll(y0,y1,y2) * tll(y2,y3,y4) * tll(y4,y5,y6) * tll(y6,y7,y8) * tll(z0,z1,z2) * tll(z2,z3,z4) * tll(z4,z5,z6) * tll(z6,z7,z8) & x0=x1 & x2!=x3 & x4=x5 & x6!=x7 & x8=x0 & y0=y1 & y2!=y3 & y4=y5 & y6!=y7 & y8=y0 & z0=z1 & z2!=z3 & z4=z5 & z6!=z7 & z8=z0
+    |- false;

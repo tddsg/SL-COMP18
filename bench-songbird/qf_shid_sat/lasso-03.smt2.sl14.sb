@@ -1,0 +1,16 @@
+
+data RefSll_t {
+    RefSll_t next;
+};
+
+pred sll(x,y) := 
+    (emp & x=y)
+    \/ (exists u. x->RefSll_t{next:u} * sll(u,y) & x!=y);
+
+pred lasso(x) := 
+    (exists y. x->RefSll_t{next:y} * lasso(y))
+    \/ (exists y. x->RefSll_t{next:y} * sll(y,x));
+
+
+checkentail sll(x0,nil) * lasso(x0)
+    |- false;

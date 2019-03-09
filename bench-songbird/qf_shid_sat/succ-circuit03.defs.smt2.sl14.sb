@@ -1,0 +1,36 @@
+
+data RefGTyp {
+    RefGTyp f0;
+    RefGTyp f1;
+};
+
+pred one(x) := (emp & nil!=x);
+
+pred zero(x) := (emp & nil=x);
+
+pred succ3circuit(x1,x2,x3,y1,y2,y3) := (exists z3. notg(x1,y1) * xorg(x1,x2,y2) * andg(x1,x2,z3) * xorg(z3,x3,y3));
+
+pred Q(y1,y2,y3) := 
+    (zero(y1) * zero(y2) * zero(y3))
+    \/ (exists x1,x2,x3. succ3circuit(x1,x2,x3,y1,y2,y3) * Q(x1,x2,x3));
+
+pred P(x1,x2,x3) := (one(x1) * one(x2) * one(x3) * Q(x1,x2,x3));
+
+pred notg(x,y) := 
+    (zero(x) * one(y))
+    \/ (one(x) * zero(y));
+
+pred xorg(x,y,z) := 
+    (zero(x) * zero(y) * zero(z))
+    \/ (zero(x) * one(y) * one(z))
+    \/ (one(x) * zero(y) * one(z))
+    \/ (one(x) * one(y) * zero(z));
+
+pred andg(x,y,z) := 
+    (zero(x) * zero(z))
+    \/ (zero(y) * zero(z))
+    \/ (one(x) * one(y) * one(z));
+
+
+checkentail P(x0,x1,x2)
+    |- false;
